@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Online Retail Market Basket Analysis · Portfolio</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Karla:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #0e0e10;
+    --surface: #141416;
+    --surface2: #1a1a1f;
+    --border: #242428;
+    --accent: #7c6af7;
+    --accent2: #a594ff;
+    --accent3: #f7c26a;
+    --muted: #3d3d4a;
+    --text: #e8e8f0;
+    --text-dim: #7a7a8e;
+    --mono: 'Courier New', monospace;
+    --sans: 'Karla', sans-serif;
+    --display: 'Syne', sans-serif;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-weight: 300;
+    line-height: 1.75;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background:
+      radial-gradient(ellipse 60% 40% at 10% 20%, rgba(124,106,247,0.07) 0%, transparent 60%),
+      radial-gradient(ellipse 40% 50% at 90% 80%, rgba(247,194,106,0.04) 0%, transparent 60%);
+    pointer-events: none; z-index: 0;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: rgba(14,14,16,0.9);
+    backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1rem 2.5rem;
+  }
+  .nav-brand { font-family: var(--display); font-size: 0.8rem; font-weight: 600; color: var(--accent2); letter-spacing: 0.05em; }
+  .nav-links { display: flex; gap: 2rem; list-style: none; }
+  .nav-links a { font-family: var(--sans); font-size: 0.72rem; color: var(--text-dim); text-decoration: none; letter-spacing: 0.1em; text-transform: uppercase; transition: color 0.2s; }
+  .nav-links a:hover { color: var(--accent2); }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh; padding-top: 70px;
+    display: flex; flex-direction: column; justify-content: flex-end;
+    padding: 70px 2.5rem 5rem; position: relative;
+  }
+  .hero-grid {
+    position: absolute; inset: 0;
+    background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px);
+    background-size: 80px 80px; opacity: 0.2;
+    mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 0%, transparent 70%);
+  }
+  .hero-tag {
+    font-family: var(--sans); font-size: 0.68rem; letter-spacing: 0.18em;
+    text-transform: uppercase; color: var(--accent); margin-bottom: 1.5rem;
+    display: flex; align-items: center; gap: 0.75rem;
+    opacity: 0; animation: fadeUp 0.6s 0.2s forwards;
+  }
+  .hero-tag::before { content: ''; display: block; width: 28px; height: 1px; background: var(--accent); }
+  .hero-title {
+    font-family: var(--display); font-size: clamp(2.4rem, 5.5vw, 5rem);
+    font-weight: 800; line-height: 1.0; color: #fff; max-width: 900px;
+    opacity: 0; animation: fadeUp 0.7s 0.35s forwards;
+  }
+  .hero-title .hl { color: var(--accent2); }
+  .hero-sub {
+    margin-top: 1.75rem; font-size: 1rem; color: var(--text-dim);
+    max-width: 600px; line-height: 1.7;
+    opacity: 0; animation: fadeUp 0.7s 0.5s forwards;
+  }
+  .hero-stats {
+    margin-top: 3rem; display: flex; flex-wrap: wrap; gap: 2.5rem;
+    opacity: 0; animation: fadeUp 0.7s 0.65s forwards;
+  }
+  .hero-stat .val { font-family: var(--display); font-size: 2rem; font-weight: 700; color: var(--accent2); display: block; line-height: 1; }
+  .hero-stat .lbl { font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-dim); margin-top: 0.3rem; display: block; }
+
+  /* LAYOUT */
+  main { max-width: 1100px; margin: 0 auto; padding: 0 2.5rem 8rem; position: relative; z-index: 1; }
+  section { margin-top: 6rem; }
+  .section-label {
+    font-family: var(--sans); font-size: 0.65rem; letter-spacing: 0.18em;
+    text-transform: uppercase; color: var(--accent); display: flex;
+    align-items: center; gap: 1rem; margin-bottom: 2.5rem;
+  }
+  .section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+  h2 { font-family: var(--display); font-size: clamp(1.6rem, 3vw, 2.4rem); font-weight: 700; color: #fff; margin-bottom: 1rem; }
+  h3 { font-family: var(--display); font-size: 1rem; font-weight: 600; color: var(--accent2); margin-bottom: 0.6rem; }
+  p { font-size: 0.95rem; color: var(--text-dim); margin-bottom: 1rem; }
+  p:last-child { margin-bottom: 0; }
+
+  /* CARDS */
+  .card { background: var(--surface); border: 1px solid var(--border); padding: 2rem; transition: border-color 0.25s; }
+  .card:hover { border-color: var(--muted); }
+
+  /* GRID LAYOUTS */
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--border); border: 1px solid var(--border); }
+  .two-col > * { background: var(--surface); padding: 2rem; }
+  .three-col { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); }
+  .three-col > * { background: var(--surface); padding: 2rem; }
+
+  /* STAT BAND */
+  .stat-band { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); margin-top: 2rem; }
+  .stat-item { background: var(--surface); padding: 1.75rem; text-align: center; }
+  .stat-val { font-family: var(--display); font-size: 1.8rem; font-weight: 700; color: var(--accent2); display: block; line-height: 1; margin-bottom: 0.5rem; }
+  .stat-lbl { font-size: 0.65rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-dim); }
+
+  /* EQUATION BLOCK */
+  .eq-block {
+    background: var(--surface2); border: 1px solid var(--border);
+    border-left: 3px solid var(--accent); padding: 1.5rem 2rem; margin: 1.5rem 0;
+  }
+  .eq-title { font-family: var(--sans); font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.75rem; }
+  .eq { font-family: var(--mono); font-size: 0.9rem; color: var(--text); line-height: 2; }
+  .eq .var { color: var(--accent2); }
+  .eq .op { color: var(--accent3); }
+  .eq-note { font-size: 0.82rem; color: var(--text-dim); margin-top: 0.75rem; margin-bottom: 0; }
+
+  /* CODE BLOCK */
+  .code-block { background: #0a0a0c; border: 1px solid var(--border); padding: 1.5rem; margin: 1.5rem 0; overflow-x: auto; }
+  .code-block pre { font-family: var(--mono); font-size: 0.78rem; color: var(--text-dim); line-height: 1.75; }
+  .code-block .kw { color: var(--accent2); }
+  .code-block .fn { color: var(--accent3); }
+  .code-block .cm { color: var(--muted); }
+  .code-block .str { color: #7ec8a4; }
+
+  /* INSIGHT BOX */
+  .insight { background: rgba(124,106,247,0.07); border: 1px solid rgba(124,106,247,0.2); padding: 1.5rem 2rem; margin: 1.5rem 0; }
+  .insight p { color: var(--text); font-size: 0.95rem; margin: 0; }
+
+  /* PHASE STEPS */
+  .phases { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); margin-top: 2rem; }
+  .phase { background: var(--surface); padding: 2rem; transition: background 0.2s; position: relative; }
+  .phase:hover { background: var(--surface2); }
+  .phase-num { font-family: var(--display); font-size: 3rem; font-weight: 800; color: var(--border); line-height: 1; margin-bottom: 1rem; }
+  .phase-title { font-size: 0.65rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.6rem; }
+  .phase-body { font-size: 0.87rem; color: var(--text-dim); line-height: 1.65; }
+
+  /* CLUSTER CARDS */
+  .clusters { display: grid; grid-template-columns: repeat(5, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); margin-top: 2rem; }
+  .cluster { background: var(--surface); padding: 1.5rem; transition: background 0.2s; position: relative; overflow: hidden; }
+  .cluster:hover { background: var(--surface2); }
+  .cluster::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; }
+  .c0::before { background: #7c6af7; }
+  .c1::before { background: #f7c26a; }
+  .c2::before { background: #6af7c2; }
+  .c3::before { background: #f76a6a; }
+  .c4::before { background: #f76ac2; }
+  .cluster-id { font-family: var(--display); font-size: 1.8rem; font-weight: 800; color: var(--border); line-height: 1; margin-bottom: 0.5rem; }
+  .cluster-name { font-family: var(--display); font-size: 0.78rem; font-weight: 600; color: #fff; margin-bottom: 0.5rem; }
+  .cluster-count { font-size: 0.65rem; letter-spacing: 0.08em; color: var(--text-dim); margin-bottom: 0.75rem; }
+  .word-pills { display: flex; flex-wrap: wrap; gap: 0.3rem; }
+  .pill { font-family: var(--mono); font-size: 0.6rem; padding: 0.15rem 0.45rem; background: var(--surface2); border: 1px solid var(--border); color: var(--text-dim); }
+
+  /* RULE TABLE */
+  .rule-table { width: 100%; border-collapse: collapse; margin-top: 1.5rem; font-size: 0.82rem; }
+  .rule-table th { font-size: 0.62rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-dim); text-align: left; padding: 0.75rem 1rem; background: var(--surface2); border-bottom: 1px solid var(--border); }
+  .rule-table td { padding: 0.85rem 1rem; border-bottom: 1px solid var(--border); color: var(--text-dim); }
+  .rule-table tr:last-child td { border-bottom: none; }
+  .rule-table tr:hover td { background: var(--surface2); }
+  .rule-table .item { font-family: var(--mono); font-size: 0.75rem; color: var(--accent2); }
+  .rule-table .metric { font-family: var(--display); font-weight: 600; color: var(--text); }
+
+  /* TAKEAWAYS */
+  .takeaways { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--border); border: 1px solid var(--border); margin-top: 2rem; }
+  .takeaway { background: var(--surface); padding: 2rem; transition: background 0.2s; }
+  .takeaway:hover { background: var(--surface2); }
+  .takeaway-icon { font-size: 1.4rem; margin-bottom: 0.75rem; display: block; }
+
+  /* STACK */
+  .stack { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1.5rem; }
+  .stack-pill { font-family: var(--mono); font-size: 0.68rem; padding: 0.35rem 0.8rem; border: 1px solid var(--border); color: var(--text-dim); background: var(--surface); letter-spacing: 0.04em; transition: border-color 0.2s, color 0.2s; }
+  .stack-pill:hover { border-color: var(--accent); color: var(--accent2); }
+
+  /* FOOTER */
+  footer { border-top: 1px solid var(--border); padding: 2rem 2.5rem; display: flex; justify-content: space-between; align-items: center; max-width: 1100px; margin: 0 auto; }
+  .footer-text { font-size: 0.68rem; letter-spacing: 0.08em; color: var(--text-dim); }
+  .footer-link { font-size: 0.68rem; color: var(--accent2); text-decoration: none; letter-spacing: 0.08em; }
+  .footer-link:hover { opacity: 0.7; }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
+  .reveal { opacity: 0; transform: translateY(14px); transition: opacity 0.6s, transform 0.6s; }
+  .reveal.visible { opacity: 1; transform: none; }
+
+  @media (max-width: 900px) {
+    nav { padding: 1rem 1.25rem; }
+    .nav-links { display: none; }
+    .hero { padding: 80px 1.25rem 4rem; }
+    main { padding: 0 1.25rem 5rem; }
+    .two-col, .three-col, .phases, .takeaways { grid-template-columns: 1fr; }
+    .stat-band { grid-template-columns: repeat(2, 1fr); }
+    .clusters { grid-template-columns: repeat(2, 1fr); }
+    footer { flex-direction: column; gap: 0.75rem; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <span class="nav-brand">Portfolio</span>
+  <ul class="nav-links">
+    <li><a href="#overview">Overview</a></li>
+    <li><a href="#dataset">Dataset</a></li>
+    <li><a href="#method">Method</a></li>
+    <li><a href="#results">Results</a></li>
+    <li><a href="#conclusion">Conclusion</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-tag">Market Basket Analysis · Association Rules · Clustering</div>
+  <h1 class="hero-title">Online Retail<br><span class="hl">Behavioral Intelligence</span></h1>
+  <p class="hero-sub">Mining association rules, analyzing complementary item pricing dynamics, and clustering products by linguistic patterns from 400K+ e-commerce transactions.</p>
+  <div class="hero-stats">
+    <div class="hero-stat"><span class="val">400K</span><span class="lbl">Transactions analyzed</span></div>
+    <div class="hero-stat"><span class="val">18,536</span><span class="lbl">Transaction baskets</span></div>
+    <div class="hero-stat"><span class="val">275</span><span class="lbl">Association rules</span></div>
+    <div class="hero-stat"><span class="val">5</span><span class="lbl">Product clusters</span></div>
+  </div>
+</section>
+
+<main>
+
+  <!-- OVERVIEW -->
+  <section id="overview">
+    <div class="section-label reveal">01 · Overview</div>
+    <h2 class="reveal">What Was Done & Why</h2>
+
+    <div class="two-col reveal">
+      <div>
+        <h3>Motivation</h3>
+        <p>This project was driven by the recognition that vast amounts of transactional data hold untapped competitive intelligence. Companies across retail — from Walmart to Amazon — leverage data mining to understand customer behavior, manage inventory, and drive targeted marketing.</p>
+        <p>The central premise: consumers have inertia in their habits, and those habits leave detectable patterns in purchase data. Our goal was to extract those patterns and translate them into actionable business strategy.</p>
+      </div>
+      <div style="background:var(--surface2)">
+        <h3>Research Questions</h3>
+        <div class="insight" style="margin:0">
+          <p><strong style="color:var(--accent2)">Q1.</strong> Can we estimate the probability of future purchases by identifying associations between products?</p>
+        </div>
+        <div class="insight" style="margin-top:1px">
+          <p><strong style="color:var(--accent3)">Q2.</strong> Are there meaningful insights that emerge from differences in product prices and quantities?</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="stat-band reveal">
+      <div class="stat-item"><span class="stat-val">397,925</span><span class="stat-lbl">Clean rows after processing</span></div>
+      <div class="stat-item"><span class="stat-val">13.02</span><span class="stat-lbl">Avg items per invoice</span></div>
+      <div class="stat-item"><span class="stat-val">£3.12</span><span class="stat-lbl">Avg item price</span></div>
+      <div class="stat-item"><span class="stat-val">26.45</span><span class="stat-lbl">Avg units per invoice</span></div>
+    </div>
+  </section>
+
+  <!-- DATASET -->
+  <section id="dataset">
+    <div class="section-label reveal">02 · Dataset</div>
+    <h2 class="reveal">The onlineRetail2 Dataset</h2>
+
+    <p class="reveal">Sourced from the <a href="https://archive.ics.uci.edu/dataset/502/online+retail+ii" style="color:var(--accent2);text-decoration:none">UC Irvine Machine Learning Repository</a>, this dataset contains transactional records from a UK-based online retailer covering December 2010 through December 2011. The source contains 541,910 rows; our partition includes approximately 400,000 rows after cleaning.</p>
+
+    <div class="three-col reveal" style="margin-top:2rem">
+      <div>
+        <h3>Raw Data</h3>
+        <p style="font-size:0.87rem">541,910 total rows. Each row represents one line item in an invoice — a single product within a single transaction. Invoice numbers, item descriptions, quantities, prices, and timestamps are included.</p>
+      </div>
+      <div style="background:var(--surface2)">
+        <h3>What Was Removed</h3>
+        <p style="font-size:0.87rem">135,080 rows with NA values were dropped. 8,905 rows with negative quantities — likely representing returned items — were also removed. These would distort frequency counts and association probabilities.</p>
+      </div>
+      <div>
+        <h3>Clean Dataset</h3>
+        <p style="font-size:0.87rem">397,925 rows remain for analysis. This is the foundation for all three analytical phases: association rule mining, price-quantity analysis, and product clustering.</p>
+      </div>
+    </div>
+
+    <div style="margin-top:2.5rem" class="reveal">
+      <h3>Top Revenue Countries</h3>
+      <p>Exploratory analysis revealed that the United Kingdom, Netherlands, and Eire are the top three revenue-generating countries, with the UK accounting for the overwhelming majority of transactions. Descriptive statistics also indicated peak purchase periods, suggesting seasonality in buying patterns — an important factor for inventory forecasting.</p>
+    </div>
+  </section>
+
+  <!-- METHOD -->
+  <section id="method">
+    <div class="section-label reveal">03 · Method</div>
+    <h2 class="reveal">Three Analytical Phases</h2>
+
+    <div class="phases reveal">
+      <div class="phase">
+        <div class="phase-num">01</div>
+        <div class="phase-title">Data Cleaning & EDA</div>
+        <div class="phase-body">Standardized date columns, trimmed whitespace from descriptions, removed NA values and negative quantities. Followed by descriptive statistics and revenue aggregation by country and time period.</div>
+      </div>
+      <div class="phase">
+        <div class="phase-num">02</div>
+        <div class="phase-title">Association Rule Mining</div>
+        <div class="phase-body">Constructed transaction baskets from invoice lines. Ran the Apriori algorithm to find frequent itemsets. Extended the analysis using quantity bins to capture purchase intensity alongside item co-occurrence.</div>
+      </div>
+      <div class="phase">
+        <div class="phase-num">03</div>
+        <div class="phase-title">Clustering & Pricing</div>
+        <div class="phase-body">Applied TF-IDF vectorization to item descriptions, then K-Means clustering to group products by linguistic similarity. Separately analyzed price-quantity dynamics for identified complementary items.</div>
+      </div>
+    </div>
+
+    <!-- ASSOCIATION RULES -->
+    <div style="margin-top:3.5rem" class="reveal">
+      <h3>Association Rule Mining — The Theory</h3>
+      <p>Association rules — also called market basket analysis or co-occurrence grouping — identify items that appear together in transactions more frequently than chance would predict. The goal is not just to find what co-occurs, but to quantify how surprising and actionable those co-occurrences are.</p>
+      <p>Three core metrics govern association rule evaluation:</p>
+
+      <div class="eq-block">
+        <div class="eq-title">Support</div>
+        <div class="eq"><span class="var">Support(A ∪ B)</span> <span class="op">=</span> freq{A, B} / T</div>
+        <p class="eq-note">The proportion of all transactions that contain both A and B. Measures how frequently the itemset appears across the entire dataset.</p>
+      </div>
+
+      <div class="eq-block">
+        <div class="eq-title">Confidence</div>
+        <div class="eq"><span class="var">Confidence(A → B)</span> <span class="op">=</span> Support(A ∪ B) / Support(A) <span class="op">=</span> p(B | A)</div>
+        <p class="eq-note">The conditional probability that B appears given A is present. Answers: "When a customer buys A, how often do they also buy B?" A confidence of 90% means 9 out of 10 transactions containing A also contain B.</p>
+      </div>
+
+      <div class="eq-block">
+        <div class="eq-title">Lift</div>
+        <div class="eq"><span class="var">Lift(A, B)</span> <span class="op">=</span> p(A, B) / [p(A) × p(B)]</div>
+        <p class="eq-note">How much more frequently A and B co-occur compared to if they were completely independent. Lift = 1 means no association. Lift > 1 means positive association — they appear together more than chance would predict. Lift < 1 means they repel each other.</p>
+      </div>
+
+      <div class="eq-block">
+        <div class="eq-title">Leverage</div>
+        <div class="eq"><span class="var">Leverage(A, B)</span> <span class="op">=</span> p(A, B) <span class="op">−</span> p(A) × p(B)</div>
+        <p class="eq-note">The difference (rather than ratio) between observed co-occurrence and expected co-occurrence under independence. An alternative to lift that measures absolute rather than relative association strength.</p>
+      </div>
+
+      <div class="insight reveal">
+        <p>An association is most valuable when it is <em>surprising</em> — when it contradicts expectations or reveals a connection that wouldn't be obvious from domain knowledge alone. Bread and milk appearing together frequently is unsurprising. The pink and green Regency tea plates co-occurring in 90.2% of pink plate transactions is actionable signal.</p>
+      </div>
+    </div>
+
+    <!-- APRIORI -->
+    <div style="margin-top:2.5rem" class="reveal">
+      <h3>Apriori Algorithm — Implementation</h3>
+      <p>To prepare for the Apriori algorithm, each invoice was converted from individual item rows into a single transaction basket. This produced <strong style="color:var(--text)">18,536 baskets</strong>. The Apriori algorithm was then run with a minimum support threshold of 1% — meaning only itemsets appearing in at least 1% of all invoices were considered frequent.</p>
+      <p>This threshold produced <strong style="color:var(--text)">275 association rules</strong> covering both two-item and three-item sets.</p>
+
+      <div class="code-block">
+        <pre><span class="cm"># Build transaction baskets from invoice lines</span>
+basket = df.<span class="fn">groupby</span>([<span class="str">'InvoiceNo'</span>, <span class="str">'Description'</span>])[<span class="str">'Quantity'</span>]
+           .<span class="fn">sum</span>().<span class="fn">unstack</span>(fill_value=0)
+basket_sets = basket.<span class="fn">applymap</span>(<span class="kw">lambda</span> x: True <span class="kw">if</span> x > 0 <span class="kw">else</span> False)
+
+<span class="cm"># Run Apriori with min_support = 0.01</span>
+frequent_itemsets = <span class="fn">apriori</span>(basket_sets, min_support=0.01, use_colnames=True)
+rules = <span class="fn">association_rules</span>(frequent_itemsets, metric=<span class="str">"lift"</span>, min_threshold=1)</pre>
+      </div>
+    </div>
+
+    <!-- QUANTITY BINS -->
+    <div style="margin-top:2.5rem" class="reveal">
+      <h3>Extending with Quantity Bins</h3>
+      <p>Standard association rules treat an item as simply present or absent in a transaction — the quantity purchased is ignored. To capture <em>purchase intensity</em> (at what quantity do customers buy related items together?), we extended the analysis using quantity bins.</p>
+      <p>Each item's quantity was divided into five equal-width bins labeled very small, small, medium, large, and very large. The bin label was attached to the item name, and the Apriori algorithm was re-run on the new baskets. This generated <strong style="color:var(--text)">18 association rules</strong> that capture not just whether two items co-occur, but also whether customers tend to buy them in similar or different quantities.</p>
+
+      <div class="insight">
+        <p>Example finding: In 70.2% of very small orders of pink HBD bunting, there is also a very small order of blue HBD bunting. Lift of 47.48% indicates they co-occur at that order size far more than chance. Conviction of 3.305 implies the inverse (small pink without small blue) occurs almost three times less frequently than if they were independent.</p>
+      </div>
+    </div>
+
+    <!-- COMPLEMENTARY ITEMS -->
+    <div style="margin-top:2.5rem" class="reveal">
+      <h3>Complementary Item Price-Quantity Analysis</h3>
+      <p>The two items with the greatest lift from the association rules — the Regency Tea Plate Green and Regency Tea Plate Pink — were selected for deeper price-quantity analysis. For each date, total units sold were summed across all invoices and average price was calculated across all invoices for each item. These series were then merged by date and plotted.</p>
+
+      <div class="two-col" style="margin-top:1.5rem">
+        <div>
+          <h3>Green Plate: Price vs Own Quantity</h3>
+          <p style="font-size:0.87rem">The green plate quantity remained almost always at the same low level as price increased — an unusual positive price-quantity association, running counter to standard demand theory. This could indicate inelastic demand or bulk pricing effects.</p>
+        </div>
+        <div style="background:var(--surface2)">
+          <h3>Green Price vs Pink Quantity</h3>
+          <p style="font-size:0.87rem">As the green plate price increased, the quantity of pink plates also increased. This is the hallmark of a <em>substitute</em> relationship — customers switch toward the pink plate when the green plate becomes more expensive — despite the two being identified as complements through co-occurrence. This nuance demonstrates the value of multi-method analysis.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- CLUSTERING -->
+    <div style="margin-top:2.5rem" class="reveal">
+      <h3>Product Clustering via TF-IDF + K-Means</h3>
+      <p>To group products into thematic categories, item descriptions were treated as text documents and vectorized using TF-IDF (Term Frequency–Inverse Document Frequency). This converts each item name into a numeric feature vector that reflects which words are distinctive to that item versus common across all items.</p>
+
+      <div class="eq-block">
+        <div class="eq-title">TF-IDF Formula</div>
+        <div class="eq"><span class="var">TF(Term, Item)</span> <span class="op">=</span> occurrences of term in item / total terms in item</div>
+        <div class="eq" style="margin-top:0.5rem"><span class="var">IDF(Term, Item)</span> <span class="op">=</span> total items in corpus / items containing term</div>
+        <div class="eq" style="margin-top:0.5rem"><span class="var">TF-IDF</span> <span class="op">=</span> TF × IDF</div>
+        <p class="eq-note">Words that appear frequently in a specific item but rarely across the full catalog receive high TF-IDF scores. This means generic words like "RED" or "BAG" score lower than distinctive words like "VINTAGE" or "CHRISTMAS" — even if "RED" appears in that cluster. The TF-IDF matrix has dimensions: rows = number of items, columns = number of unique terms.</p>
+      </div>
+
+      <div class="code-block">
+        <pre><span class="cm"># Vectorize item descriptions</span>
+items = data[<span class="str">"Description"</span>]
+vectorizer = <span class="fn">TfidfVectorizer</span>()
+vec_items = vectorizer.<span class="fn">fit_transform</span>(items)
+<span class="fn">print</span>(vec_items.shape)  <span class="cm"># (397925, 2031)</span>
+
+<span class="cm"># K-Means with 5 clusters using Euclidean distance on TF-IDF matrix</span>
+kmeans = <span class="fn">KMeans</span>(n_clusters=5, random_state=42)
+results[<span class="str">"cluster"</span>] = kmeans.<span class="fn">fit_predict</span>(vec_items)</pre>
+      </div>
+
+      <p>K-Means was chosen from scikit-learn for its ease of use and interpretable centroids. The algorithm uses <strong style="color:var(--text)">Euclidean distance</strong> on the TF-IDF matrix to determine which items are closest to each cluster centroid, iteratively updating centroids until convergence. The result: items grouped by which distinctive words dominate their descriptions.</p>
+    </div>
+  </section>
+
+  <!-- RESULTS -->
+  <section id="results">
+    <div class="section-label reveal">04 · Results</div>
+    <h2 class="reveal">Findings</h2>
+
+    <!-- ASSOCIATION RULES TABLE -->
+    <div class="reveal">
+      <h3>Sample Association Rules — Two-Item Sets</h3>
+      <p>The table below shows selected rules from the 275 generated. The pink→green plate rule is the strongest, with near-perfect confidence and lift indicating a strongly non-random association.</p>
+
+      <table class="rule-table">
+        <thead>
+          <tr>
+            <th>Antecedent (A)</th>
+            <th>Consequent (B)</th>
+            <th>Support</th>
+            <th>Confidence</th>
+            <th>Lift</th>
+            <th>Conviction</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="item">REGENCY TEA PLATE PINK</td>
+            <td class="item">REGENCY TEA PLATE GREEN</td>
+            <td class="metric">1.1%</td>
+            <td class="metric">90.2%</td>
+            <td class="metric">61.9×</td>
+            <td class="metric">10.034</td>
+          </tr>
+          <tr>
+            <td class="item">PINK HBD BUNTING (very small)</td>
+            <td class="item">BLUE HBD BUNTING (very small)</td>
+            <td class="metric">1.0%</td>
+            <td class="metric">70.2%</td>
+            <td class="metric">47.48×</td>
+            <td class="metric">3.305</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="insight" style="margin-top:1.5rem">
+        <p><strong style="color:var(--accent2)">Interpreting the pink→green rule:</strong> A confidence of 90.2% means that in 90.2% of transactions containing a pink plate, a green plate was also present. A lift of 61.9 means they appear together 61.9× more than pure chance would predict. A conviction of 10.034 means the pattern of "pink without green" occurs 10× less often than if the items were independent.</p>
+      </div>
+    </div>
+
+    <!-- CLUSTERS -->
+    <div style="margin-top:3rem" class="reveal">
+      <h3>5 Product Clusters — TF-IDF K-Means</h3>
+      <p>Each cluster was labeled by examining the top TF-IDF terms and sample items within it. Words with high TF-IDF scores act as anchor signals that pull the centroid toward a thematic direction.</p>
+
+      <div class="clusters">
+        <div class="cluster c0">
+          <div class="cluster-id">0</div>
+          <div class="cluster-name">Kids Craft & Baking Sets</div>
+          <div class="cluster-count">53,820 items</div>
+          <div class="word-pills">
+            <span class="pill">set</span><span class="pill">cake</span><span class="pill">pack</span><span class="pill">cases</span><span class="pill">retrospot</span><span class="pill">pantry</span>
+          </div>
+        </div>
+        <div class="cluster c1">
+          <div class="cluster-id">1</div>
+          <div class="cluster-name">Home Décor & Lighting</div>
+          <div class="cluster-count">13,810 items</div>
+          <div class="word-pills">
+            <span class="pill">holder</span><span class="pill">light</span><span class="pill">hanging</span><span class="pill">heart</span><span class="pill">glass</span><span class="pill">zinc</span>
+          </div>
+        </div>
+        <div class="cluster c2">
+          <div class="cluster-id">2</div>
+          <div class="cluster-name">General Goods & Décor</div>
+          <div class="cluster-count">266,512 items</div>
+          <div class="word-pills">
+            <span class="pill">bag</span><span class="pill">red</span><span class="pill">retrospot</span><span class="pill">heart</span><span class="pill">design</span><span class="pill">lunch</span>
+          </div>
+        </div>
+        <div class="cluster c3">
+          <div class="cluster-id">3</div>
+          <div class="cluster-name">Retro / Vintage & Christmas</div>
+          <div class="cluster-count">36,507 items</div>
+          <div class="word-pills">
+            <span class="pill">vintage</span><span class="pill">christmas</span><span class="pill">bag</span><span class="pill">doily</span><span class="pill">paper</span><span class="pill">leaf</span>
+          </div>
+        </div>
+        <div class="cluster c4">
+          <div class="cluster-id">4</div>
+          <div class="cluster-name">Pink-Themed Items</div>
+          <div class="cluster-count">27,276 items</div>
+          <div class="word-pills">
+            <span class="pill">pink</span><span class="pill">polkadot</span><span class="pill">clock</span><span class="pill">alarm</span><span class="pill">blue</span><span class="pill">jumbo</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="insight" style="margin-top:1.5rem">
+        <p><strong style="color:var(--accent2)">Why Cluster 3 forms a tight theme while Cluster 2 is broad:</strong> "VINTAGE" and "CHRISTMAS" have high TF-IDF scores because they appear frequently within Cluster 3 items but rarely across the full catalog. Meanwhile, "RED" and "BAG" appear in both clusters — but their TF-IDF scores are suppressed by high corpus-wide frequency, preventing them from acting as strong anchor signals. Cluster 2 therefore encompasses a wider, less thematically cohesive range of items.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONCLUSION -->
+  <section id="conclusion">
+    <div class="section-label reveal">05 · Conclusion & Business Strategy</div>
+    <h2 class="reveal">Translating Findings into Decisions</h2>
+
+    <p class="reveal">The analysis successfully answered both research questions. Association rule mining confirmed that product co-occurrence patterns are structured and predictable. The Apriori algorithm revealed strong rules — particularly between the pink and green Regency tea plates — enabling confidence-weighted predictions about future purchase behavior. The quantity bin extension added a layer of specificity: not just what customers buy together, but at what scale.</p>
+
+    <div class="takeaways reveal">
+      <div class="takeaway">
+        <span class="takeaway-icon">🏷️</span>
+        <h3>Bundle Promotions</h3>
+        <p style="font-size:0.87rem">The pink and green plate association (90.2% confidence, 61.9× lift) is strong enough to support a direct bundling strategy. A discount on the pair would leverage their natural co-occurrence while providing monetary incentive — likely accelerating a purchase decision that would happen anyway.</p>
+      </div>
+      <div class="takeaway">
+        <span class="takeaway-icon">🖥️</span>
+        <h3>Online & In-Store Placement</h3>
+        <p style="font-size:0.87rem">Online platforms should feature the bundle on product pages and potentially the homepage. In physical retail, strategic co-location in the same aisle or display area would reinforce the association at the point of decision.</p>
+      </div>
+      <div class="takeaway">
+        <span class="takeaway-icon">📦</span>
+        <h3>Inventory Management</h3>
+        <p style="font-size:0.87rem">Since the items are frequently purchased together, restock orders should be placed in comparable quantities. Descriptive statistics revealed seasonal purchase peaks, meaning inventory decisions should account for forecasted low periods to avoid cash flow disruption from overstocking.</p>
+      </div>
+      <div class="takeaway">
+        <span class="takeaway-icon">💲</span>
+        <h3>Pricing Dynamics</h3>
+        <p style="font-size:0.87rem">The finding that green plate price increases correspond to increased pink plate purchases suggests a substitute dynamic despite item co-occurrence. Pricing decisions for one item should account for cross-price elasticity with the other — raising the green plate price may cannibalize green plate revenue while boosting pink plate revenue.</p>
+      </div>
+    </div>
+
+    <div style="margin-top:2.5rem" class="reveal">
+      <h3>Caution: Overfitting</h3>
+      <div class="insight">
+        <p>A key methodological consideration: looking too hard at the data may surface patterns that are artifacts of the specific dataset rather than generalizable signals. All findings here are exploratory — the patterns identified are directionally valid but should be validated against held-out data or future transaction periods before becoming the basis for major strategic commitments.</p>
+      </div>
+    </div>
+
+    <div style="margin-top:2.5rem" class="reveal">
+      <h3>Tech Stack</h3>
+      <div class="stack">
+        <span class="stack-pill">Python</span>
+        <span class="stack-pill">pandas</span>
+        <span class="stack-pill">numpy</span>
+        <span class="stack-pill">scikit-learn</span>
+        <span class="stack-pill">mlxtend (Apriori)</span>
+        <span class="stack-pill">TfidfVectorizer</span>
+        <span class="stack-pill">KMeans</span>
+        <span class="stack-pill">matplotlib</span>
+        <span class="stack-pill">seaborn</span>
+      </div>
+    </div>
+
+    <div style="margin-top:2rem" class="reveal">
+      <h3 style="font-size:0.65rem;letter-spacing:0.15em;text-transform:uppercase;font-family:var(--sans);font-weight:400;color:var(--text-dim)">References</h3>
+      <div class="card" style="font-size:0.78rem;color:var(--text-dim);line-height:2;margin-top:1rem">
+        <em>Online retail II</em>. UCI Machine Learning Repository.
+        <a href="https://archive.ics.uci.edu/dataset/502/online+retail+ii" style="color:var(--accent2);text-decoration:none">archive.ics.uci.edu/dataset/502/online+retail+ii</a><br>
+        Provost, F., &amp; Fawcett, T. (2013). <em>Data Science for Business.</em> O'Reilly.
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <span class="footer-text">Fall 2025 · Online Retail Market Basket Analysis</span>
+  <a class="footer-link" href="https://archive.ics.uci.edu/dataset/502/online+retail+ii" target="_blank">↗ Dataset Source</a>
+</footer>
+
+<script>
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add("visible"); });
+  }, { threshold: 0.07, rootMargin: "0px 0px -30px 0px" });
+  document.querySelectorAll(".reveal").forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
