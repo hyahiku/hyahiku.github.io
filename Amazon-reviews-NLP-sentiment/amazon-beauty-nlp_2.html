@@ -1,0 +1,1125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Amazon Beauty Reviews · NLP Analysis · Haley Yahiku</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Source+Sans+3:wght@300;400;500&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #faf8f5;
+    --surface: #ffffff;
+    --surface2: #f5f2ed;
+    --border: #e8e2d9;
+    --accent: #c0392b;
+    --accent2: #e74c3c;
+    --accent-light: #fdf0ef;
+    --gold: #b8860b;
+    --text: #1a1410;
+    --text-mid: #4a3f35;
+    --text-dim: #8a7d72;
+    --serif: "Playfair Display", Georgia, serif;
+    --sans: "Source Sans 3", sans-serif;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-weight: 300;
+    line-height: 1.75;
+    overflow-x: hidden;
+  }
+
+  /* grain texture */
+  body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    background: rgba(250,248,245,0.92);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 3rem;
+  }
+
+  .nav-brand {
+    font-family: var(--serif);
+    font-size: 0.95rem;
+    color: var(--text-mid);
+    font-style: italic;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 2.5rem;
+    list-style: none;
+  }
+
+  .nav-links a {
+    font-family: var(--sans);
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .nav-links a:hover { color: var(--accent); }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    padding-top: 70px;
+  }
+
+  .hero-left {
+    background: var(--text);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 5rem 4rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-left::before {
+    content: "";
+    position: absolute;
+    top: -100px; right: -100px;
+    width: 400px; height: 400px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(192,57,43,0.15) 0%, transparent 70%);
+  }
+
+  .hero-eyebrow {
+    font-family: var(--sans);
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent2);
+    margin-bottom: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    opacity: 0;
+    animation: fadeUp 0.7s 0.2s forwards;
+  }
+
+  .hero-eyebrow::before {
+    content: "";
+    width: 28px; height: 1px;
+    background: var(--accent2);
+  }
+
+  .hero-title {
+    font-family: var(--serif);
+    font-size: clamp(2.2rem, 4vw, 3.5rem);
+    font-weight: 700;
+    line-height: 1.1;
+    color: #fff;
+    opacity: 0;
+    animation: fadeUp 0.7s 0.35s forwards;
+  }
+
+  .hero-title em {
+    font-style: italic;
+    color: var(--accent2);
+  }
+
+  .hero-subtitle {
+    margin-top: 1.5rem;
+    font-size: 0.95rem;
+    color: rgba(255,255,255,0.55);
+    line-height: 1.7;
+    max-width: 420px;
+    opacity: 0;
+    animation: fadeUp 0.7s 0.5s forwards;
+  }
+
+  .hero-chips {
+    margin-top: 2.5rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    opacity: 0;
+    animation: fadeUp 0.7s 0.65s forwards;
+  }
+
+  .chip {
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.3rem 0.75rem;
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 1px;
+    color: rgba(255,255,255,0.5);
+  }
+
+  .chip.red {
+    border-color: var(--accent);
+    color: var(--accent2);
+    background: rgba(192,57,43,0.1);
+  }
+
+  .hero-right {
+    background: var(--surface2);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 5rem 4rem;
+    gap: 2.5rem;
+    opacity: 0;
+    animation: fadeIn 0.9s 0.8s forwards;
+  }
+
+  .stat-big {
+    border-left: 3px solid var(--accent);
+    padding-left: 1.5rem;
+  }
+
+  .stat-big .num {
+    font-family: var(--serif);
+    font-size: 3rem;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1;
+    display: block;
+  }
+
+  .stat-big .label {
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-top: 0.35rem;
+    display: block;
+  }
+
+  /* MAIN */
+  main { max-width: 1080px; margin: 0 auto; padding: 0 3rem 8rem; }
+
+  section { margin-top: 6rem; }
+
+  .section-header {
+    display: flex;
+    align-items: baseline;
+    gap: 1.5rem;
+    margin-bottom: 2.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .section-num {
+    font-family: var(--serif);
+    font-size: 0.75rem;
+    color: var(--accent);
+    font-style: italic;
+    letter-spacing: 0.05em;
+  }
+
+  h2 {
+    font-family: var(--serif);
+    font-size: clamp(1.5rem, 3vw, 2.2rem);
+    font-weight: 600;
+    color: var(--text);
+    line-height: 1.2;
+  }
+
+  h3 {
+    font-family: var(--serif);
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 0.75rem;
+  }
+
+  p {
+    font-size: 0.97rem;
+    color: var(--text-mid);
+    margin-bottom: 1rem;
+    max-width: 680px;
+  }
+
+  p:last-child { margin-bottom: 0; }
+
+  /* CARDS */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 2rem;
+    transition: box-shadow 0.25s;
+  }
+
+  .card:hover { box-shadow: 0 4px 24px rgba(0,0,0,0.06); }
+
+  /* TWO COL */
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+  }
+
+  .two-col > * { background: var(--surface); }
+
+  /* DATASET TABLE */
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1.5rem;
+    font-size: 0.88rem;
+  }
+
+  .data-table th {
+    font-family: var(--sans);
+    font-size: 0.65rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    text-align: left;
+    padding: 0.75rem 1rem;
+    background: var(--surface2);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .data-table td {
+    padding: 0.85rem 1rem;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-mid);
+    vertical-align: top;
+  }
+
+  .data-table tr:last-child td { border-bottom: none; }
+
+  .data-table tr:hover td { background: var(--surface2); }
+
+  .col-name {
+    font-family: "Courier New", monospace;
+    font-size: 0.82rem;
+    color: var(--accent);
+    white-space: nowrap;
+  }
+
+  /* PHASE STEPS */
+  .phases {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    margin-top: 2rem;
+  }
+
+  .phase {
+    background: var(--surface);
+    padding: 2rem;
+    position: relative;
+    transition: background 0.2s;
+  }
+
+  .phase:hover { background: var(--accent-light); }
+
+  .phase-num {
+    font-family: var(--serif);
+    font-size: 3.5rem;
+    font-weight: 700;
+    color: var(--border);
+    line-height: 1;
+    margin-bottom: 1rem;
+    user-select: none;
+  }
+
+  .phase-title {
+    font-family: var(--sans);
+    font-size: 0.68rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 0.75rem;
+  }
+
+  .phase-body {
+    font-size: 0.87rem;
+    color: var(--text-mid);
+    line-height: 1.65;
+  }
+
+  /* DETAIL BLOCKS */
+  .detail-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-top: 2rem;
+  }
+
+  .detail-block {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 1.75rem;
+  }
+
+  .detail-block h3 {
+    font-size: 0.95rem;
+    margin-bottom: 0.6rem;
+  }
+
+  .detail-block p {
+    font-size: 0.87rem;
+    margin-bottom: 0;
+  }
+
+  /* CODE BLOCK */
+  .code-block {
+    background: #1a1410;
+    border: 1px solid #2e2520;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+    overflow-x: auto;
+  }
+
+  .code-block pre {
+    font-family: "Courier New", monospace;
+    font-size: 0.78rem;
+    color: rgba(255,255,255,0.6);
+    line-height: 1.7;
+  }
+
+  .code-block .key { color: #e74c3c; }
+  .code-block .val { color: #f39c12; }
+  .code-block .cm { color: #5a4f45; }
+
+  /* CLUSTERS */
+  .clusters {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    margin-top: 2rem;
+  }
+
+  .cluster {
+    background: var(--surface);
+    padding: 1.75rem;
+    transition: background 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .cluster::after {
+    content: "";
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 2px;
+  }
+
+  .cluster-a::after { background: var(--accent); }
+  .cluster-b::after { background: var(--gold); }
+  .cluster-c::after { background: #2980b9; }
+
+  .cluster:hover { background: var(--surface2); }
+
+  .cluster-label {
+    font-family: var(--sans);
+    font-size: 0.62rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 0.5rem;
+  }
+
+  .cluster-name {
+    font-family: var(--serif);
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 0.75rem;
+  }
+
+  .cluster-pct {
+    font-family: var(--serif);
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--accent);
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+
+  .word-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+    margin-top: 0.75rem;
+  }
+
+  .word-tag {
+    font-family: "Courier New", monospace;
+    font-size: 0.68rem;
+    padding: 0.2rem 0.5rem;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+  }
+
+  /* COMPLAINT BARS */
+  .complaint-list {
+    margin-top: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    border: 1px solid var(--border);
+  }
+
+  .complaint-row {
+    display: grid;
+    grid-template-columns: 160px 1fr 60px;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 1rem 1.5rem;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    transition: background 0.2s;
+  }
+
+  .complaint-row:last-child { border-bottom: none; }
+  .complaint-row:hover { background: var(--accent-light); }
+
+  .complaint-name {
+    font-size: 0.85rem;
+    color: var(--text-mid);
+    font-weight: 400;
+  }
+
+  .complaint-bar-wrap {
+    height: 8px;
+    background: var(--surface2);
+    border-radius: 0;
+    overflow: hidden;
+  }
+
+  .complaint-bar {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 0;
+    transition: width 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+    width: 0;
+  }
+
+  .complaint-pct {
+    font-family: var(--serif);
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text);
+    text-align: right;
+  }
+
+  /* VIZ FRAME */
+  .viz-frame {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 2rem;
+    margin-top: 2rem;
+  }
+
+  .viz-caption {
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+    color: var(--text-dim);
+    text-align: center;
+    margin-top: 1rem;
+    font-style: italic;
+    margin-bottom: 0;
+  }
+
+  /* QUOTE BLOCK */
+  .insight-box {
+    border-left: 3px solid var(--accent);
+    background: var(--accent-light);
+    padding: 1.5rem 2rem;
+    margin: 1.5rem 0;
+  }
+
+  .insight-box p {
+    font-family: var(--serif);
+    font-size: 1rem;
+    font-style: italic;
+    color: var(--text);
+    margin: 0;
+    max-width: 100%;
+  }
+
+  /* CONCLUSION */
+  .conclusion-wrap {
+    background: var(--text);
+    padding: 4rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .conclusion-wrap::before {
+    content: "";
+    position: absolute;
+    top: -80px; right: -80px;
+    width: 300px; height: 300px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(192,57,43,0.12) 0%, transparent 70%);
+  }
+
+  .conclusion-wrap h2 {
+    color: #fff;
+    margin-bottom: 2rem;
+  }
+
+  .conclusion-wrap p {
+    color: rgba(255,255,255,0.6);
+    max-width: 720px;
+  }
+
+  .conclusion-wrap h3 {
+    color: rgba(255,255,255,0.85);
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    font-family: var(--sans);
+    font-weight: 400;
+    margin-top: 2.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .takeaway-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+  }
+
+  .takeaway {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    padding: 1.5rem;
+  }
+
+  .takeaway-icon { font-size: 1.2rem; margin-bottom: 0.75rem; display: block; }
+
+  .takeaway h4 {
+    font-family: var(--serif);
+    font-size: 0.95rem;
+    color: rgba(255,255,255,0.85);
+    margin-bottom: 0.5rem;
+  }
+
+  .takeaway p {
+    font-size: 0.84rem;
+    color: rgba(255,255,255,0.45);
+    max-width: 100%;
+    margin: 0;
+  }
+
+  /* STACK */
+  .stack-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 1.5rem;
+  }
+
+  .stack-tag {
+    font-size: 0.7rem;
+    letter-spacing: 0.07em;
+    padding: 0.35rem 0.8rem;
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    background: var(--surface);
+    transition: border-color 0.2s, color 0.2s;
+  }
+
+  .stack-tag:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* FOOTER */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 2rem 3rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1080px;
+    margin: 0 auto;
+  }
+
+  .footer-text {
+    font-size: 0.72rem;
+    letter-spacing: 0.06em;
+    color: var(--text-dim);
+  }
+
+  .footer-link {
+    font-size: 0.72rem;
+    letter-spacing: 0.06em;
+    color: var(--accent);
+    text-decoration: none;
+    transition: opacity 0.2s;
+  }
+
+  .footer-link:hover { opacity: 0.7; }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(18px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(14px);
+    transition: opacity 0.6s, transform 0.6s;
+  }
+
+  .reveal.visible { opacity: 1; transform: none; }
+
+  @media (max-width: 900px) {
+    nav { padding: 1rem 1.5rem; }
+    .nav-links { display: none; }
+    .hero { grid-template-columns: 1fr; }
+    .hero-right { padding: 3rem 2rem; }
+    main { padding: 0 1.5rem 5rem; }
+    .phases, .clusters { grid-template-columns: 1fr; }
+    .two-col, .detail-grid, .takeaway-grid { grid-template-columns: 1fr; }
+    .conclusion-wrap { padding: 2.5rem 1.5rem; }
+    .complaint-row { grid-template-columns: 120px 1fr 50px; }
+    footer { flex-direction: column; gap: 0.75rem; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <span class="nav-brand">Haley Yahiku · Portfolio</span>
+  <ul class="nav-links">
+    <li><a href="#overview">Overview</a></li>
+    <li><a href="#dataset">Dataset</a></li>
+    <li><a href="#method">Method</a></li>
+    <li><a href="#results">Results</a></li>
+    <li><a href="#conclusion">Conclusion</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-left">
+    <div class="hero-eyebrow">NLP · Clustering · E-Commerce</div>
+    <h1 class="hero-title">Identifying<br><em>Complaint Themes</em><br>in Low-Rated<br>Beauty Reviews</h1>
+    <p class="hero-subtitle">Using NLP preprocessing and K-Means clustering to surface structured patterns of dissatisfaction from 700K+ Amazon beauty product reviews.</p>
+    <div class="hero-chips">
+      <span class="chip red">Python</span>
+      <span class="chip red">K-Means</span>
+      <span class="chip red">NLP</span>
+      <span class="chip">701,528 Reviews</span>
+      <span class="chip">February 2026</span>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="stat-big">
+      <span class="num">701K</span>
+      <span class="label">Amazon beauty reviews analyzed</span>
+    </div>
+    <div class="stat-big">
+      <span class="num">29%</span>
+      <span class="label">Low-rated reviews (≤ 3 stars)</span>
+    </div>
+    <div class="stat-big">
+      <span class="num">5</span>
+      <span class="label">Distinct complaint clusters identified</span>
+    </div>
+    <div class="stat-big">
+      <span class="num">26.4%</span>
+      <span class="label">Top complaint driver — Quality Issues</span>
+    </div>
+  </div>
+</div>
+
+<main>
+
+  <!-- OVERVIEW -->
+  <section id="overview">
+    <div class="section-header reveal">
+      <span class="section-num">01</span>
+      <h2>Overview & Motivation</h2>
+    </div>
+
+    <div class="two-col reveal">
+      <div style="padding:2rem">
+        <h3>Why This Analysis?</h3>
+        <p>As an e-commerce business owner, understanding the voice of the customer is a strategic priority. This analysis investigates Amazon reviews for beauty products to surface structured, recurring patterns in negative customer experiences.</p>
+        <p>Two core priorities drove the approach: understanding what customers complain about with competitor products, and identifying differentiation opportunities to improve the overall customer experience.</p>
+      </div>
+      <div style="padding:2rem;background:var(--surface2)">
+        <h3>Research Question</h3>
+        <div class="insight-box" style="margin:0">
+          <p>What are the common themes found in customer feedback with low ratings?</p>
+        </div>
+        <p style="margin-top:1rem;font-size:0.87rem">By exploring this, we can identify areas for product improvement, satisfy customer expectations, differentiate from competitors, and improve product rankings and trust.</p>
+      </div>
+    </div>
+
+    <div class="insight-box reveal" style="margin-top:2rem">
+      <p>A similar methodology could be applied to other aspects of e-commerce — including market research, keyword utilization, and SEO strategy — making this a broadly transferable analytical framework.</p>
+    </div>
+  </section>
+
+  <!-- DATASET -->
+  <section id="dataset">
+    <div class="section-header reveal">
+      <span class="section-num">02</span>
+      <h2>The Dataset</h2>
+    </div>
+
+    <p class="reveal">The Amazon Beauty Reviews dataset is sourced from <a href="https://huggingface.co/datasets/jhan21/amazon-beauty-reviews-dataset" style="color:var(--accent)">Hugging Face</a>. It contains 701,528 rows across 10 columns. The columns most relevant to this analysis are <code style="font-size:0.85em;background:var(--surface2);padding:0.1rem 0.4rem;border:1px solid var(--border)">rating</code>, <code style="font-size:0.85em;background:var(--surface2);padding:0.1rem 0.4rem;border:1px solid var(--border)">title</code>, and <code style="font-size:0.85em;background:var(--surface2);padding:0.1rem 0.4rem;border:1px solid var(--border)">text</code>.</p>
+
+    <table class="data-table reveal">
+      <thead>
+        <tr>
+          <th>Column</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Used</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td class="col-name">rating</td><td>integer</td><td>Star rating from 1 to 5</td><td>✓ Primary filter</td></tr>
+        <tr><td class="col-name">title</td><td>object</td><td>Short review headline written by customer</td><td>✓ Combined into full_text</td></tr>
+        <tr><td class="col-name">text</td><td>object</td><td>Full body of the customer review</td><td>✓ Combined into full_text</td></tr>
+        <tr><td class="col-name">verified_purchase</td><td>object</td><td>Whether the reviewer purchased the product</td><td>—</td></tr>
+        <tr><td class="col-name">helpful_vote</td><td>integer</td><td>Number of helpful votes the review received</td><td>—</td></tr>
+        <tr><td class="col-name">asin</td><td>object</td><td>Amazon Standard Identification Number (product ID)</td><td>—</td></tr>
+      </tbody>
+    </table>
+
+    <div class="two-col reveal" style="margin-top:2rem">
+      <div style="padding:2rem">
+        <h3>Rating Distribution</h3>
+        <p style="font-size:0.87rem">The dataset spans ratings 1–5. Low ratings (≤ 3 stars) account for <strong>29%</strong> of all reviews — approximately 1 in 3 customers not having an exceptional experience. From a market research perspective, this proportion is notable but not alarming, and provides a meaningful signal to analyze.</p>
+      </div>
+      <div style="padding:2rem;background:var(--surface2)">
+        <h3>Missing Values</h3>
+        <p style="font-size:0.87rem">Only <code style="font-size:0.85em;background:var(--surface);padding:0.1rem 0.4rem;border:1px solid var(--border)">title</code> and <code style="font-size:0.85em;background:var(--surface);padding:0.1rem 0.4rem;border:1px solid var(--border)">text</code> contained missing values. Rows where <em>both</em> were empty were removed. Rows with at least one value present were retained — reflecting how Amazon allows customers to write in either or both fields.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- METHOD -->
+  <section id="method">
+    <div class="section-header reveal">
+      <span class="section-num">03</span>
+      <h2>Method & Analysis Techniques</h2>
+    </div>
+
+    <p class="reveal">The analysis was organized into three sequential phases. Each phase builds on the previous, ensuring data quality before applying NLP and statistical methods.</p>
+
+    <div class="phases reveal">
+      <div class="phase">
+        <div class="phase-num">01</div>
+        <div class="phase-title">Data Quality Assessment</div>
+        <div class="phase-body">Comprehensive cleaning to remove values that could skew results. Focused on duplicates, missing values, and irrelevant characters. Rows with both title and text empty were dropped; rows with one present were retained.</div>
+      </div>
+      <div class="phase">
+        <div class="phase-num">02</div>
+        <div class="phase-title">NLP on Low Reviews</div>
+        <div class="phase-body">Filtered to ratings ≤ 3. Combined title + text into <code>full_text</code>. Applied stopword removal — both standard English and custom domain-specific beauty terms — to isolate meaningful signal words.</div>
+      </div>
+      <div class="phase">
+        <div class="phase-num">03</div>
+        <div class="phase-title">Statistical Clustering</div>
+        <div class="phase-body">K-Means applied to group reviews by similar language patterns. Produced 5 clusters, each with top associated words and 3 representative text examples. Clusters were labeled and further broken into specific complaint drivers.</div>
+      </div>
+    </div>
+
+    <div style="margin-top:3rem" class="reveal">
+      <h3>Phase 1 — Data Cleaning in Detail</h3>
+      <p>The cleaning process emphasized validity over convenience. Skimping on this step risks biased data that misrepresents complaint themes — particularly important when the goal is to understand the hierarchy and proportions of complaints.</p>
+
+      <div class="detail-grid">
+        <div class="detail-block">
+          <h3>Duplicate Removal</h3>
+          <p>Duplicate rows were identified and removed. Leaving duplicates would artificially inflate the frequency of certain words and phrases, distorting the proportions seen in clustering.</p>
+        </div>
+        <div class="detail-block">
+          <h3>Missing Value Strategy</h3>
+          <p>Rather than dropping all rows with any missing field, only rows where both <code>title</code> and <code>text</code> were empty were removed. This preserved reviews written only in the title or only in the text body.</p>
+        </div>
+        <div class="detail-block">
+          <h3>Character Normalization</h3>
+          <p>Trailing spaces, special characters, and noise were stripped from text fields to prevent them from interfering with tokenization and word frequency analysis downstream.</p>
+        </div>
+        <div class="detail-block">
+          <h3>Column Consolidation</h3>
+          <p><code>title</code> and <code>text</code> were merged into a single <code>full_text</code> column. This simplifies analysis while capturing the full customer voice — some customers write most of their feedback in the title.</p>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:3rem" class="reveal">
+      <h3>Phase 2 — Stopword Removal</h3>
+      <p>Stopwords are non-meaningful words (e.g. "the", "is", "a") that take up space without adding analytical value. Two layers of stopwords were applied:</p>
+
+      <div class="two-col" style="margin-top:1rem">
+        <div style="padding:1.75rem">
+          <div class="phase-title" style="margin-bottom:0.5rem">Standard English Stopwords</div>
+          <p style="font-size:0.87rem;margin:0">Common functional words sourced from NLTK's English stopword list — prepositions, articles, conjunctions, and common verbs that appear across all domains.</p>
+        </div>
+        <div style="padding:1.75rem;background:var(--surface2)">
+          <div class="phase-title" style="margin-bottom:0.5rem">Custom Domain Stopwords</div>
+          <p style="font-size:0.87rem;margin:0">Beauty-specific terms that are ubiquitous but uninformative in this context — e.g. "product", "use", "hair", "skin" — which would otherwise dominate word frequencies without revealing complaint themes.</p>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:3rem" class="reveal">
+      <h3>Phase 3 — K-Means Clustering</h3>
+      <p>K-Means was chosen as the preferred clustering method because it groups reviews by similar language patterns and produces interpretable cluster centroids. The result was 5 clusters, each visualized with its top associated words and 3 representative text examples.</p>
+
+      <div class="code-block">
+        <pre><span class="cm"># Complaint driver keyword mapping</span>
+complaint_drivers = {
+  <span class="key">"Color Issues"</span>:       [<span class="val">"color"</span>, <span class="val">"shade"</span>, <span class="val">"dark"</span>, <span class="val">"light"</span>, <span class="val">"blonde"</span>, <span class="val">"red"</span>],
+  <span class="key">"Size Issues"</span>:        [<span class="val">"small"</span>, <span class="val">"large"</span>, <span class="val">"size"</span>, <span class="val">"smaller"</span>, <span class="val">"bigger"</span>, <span class="val">"fit"</span>],
+  <span class="key">"Quantity Issues"</span>:    [<span class="val">"quantity"</span>, <span class="val">"amount"</span>, <span class="val">"less"</span>, <span class="val">"half"</span>, <span class="val">"empty"</span>, <span class="val">"missing"</span>],
+  <span class="key">"Smell Issues"</span>:       [<span class="val">"smell"</span>, <span class="val">"odor"</span>, <span class="val">"scent"</span>, <span class="val">"stinks"</span>, <span class="val">"fragrance"</span>],
+  <span class="key">"Quality Issues"</span>:     [<span class="val">"cheap"</span>, <span class="val">"broke"</span>, <span class="val">"broken"</span>, <span class="val">"thin"</span>, <span class="val">"cracked"</span>],
+  <span class="key">"Performance Issues"</span>: [<span class="val">"work"</span>, <span class="val">"working"</span>, <span class="val">"doesnt"</span>, <span class="val">"failed"</span>, <span class="val">"leak"</span>]
+}</pre>
+      </div>
+
+      <p style="font-size:0.87rem">The text examples were a particularly valuable output — seeing words used in context rather than in isolation provides richer interpretive grounding for each cluster label.</p>
+    </div>
+  </section>
+
+  <!-- RESULTS -->
+  <section id="results">
+    <div class="section-header reveal">
+      <span class="section-num">04</span>
+      <h2>Results</h2>
+    </div>
+
+    <div style="margin-bottom:3rem">
+      <h3 class="reveal">Cluster Labels</h3>
+      <p class="reveal">After examining cluster centroids and representative reviews, three broad cluster labels were assigned. Interestingly, <strong>Product Failure / Poor Quality accounted for 95%</strong> of the clustering results — revealing that dissatisfaction in this dataset is overwhelmingly driven by product-level failures rather than subjective preference.</p>
+
+      <div class="clusters reveal">
+        <div class="cluster cluster-a">
+          <div class="cluster-label">Cluster Label</div>
+          <div class="cluster-name">Product Failure / Poor Quality</div>
+          <span class="cluster-pct">95%</span>
+          <p style="font-size:0.84rem;max-width:100%;margin:0">The dominant theme — encompassing physical defects, performance failures, and products that broke or didn't work as expected.</p>
+          <div class="word-tags">
+            <span class="word-tag">broke</span>
+            <span class="word-tag">broken</span>
+            <span class="word-tag">cheap</span>
+            <span class="word-tag">failed</span>
+            <span class="word-tag">doesnt work</span>
+          </div>
+        </div>
+        <div class="cluster cluster-b">
+          <div class="cluster-label">Cluster Label</div>
+          <div class="cluster-name">Mild Dissatisfaction</div>
+          <span class="cluster-pct">~3%</span>
+          <p style="font-size:0.84rem;max-width:100%;margin:0">Softer complaints where the product partially met expectations but fell short in specific ways — often tied to value for money or minor inconveniences.</p>
+          <div class="word-tags">
+            <span class="word-tag">okay</span>
+            <span class="word-tag">expected</span>
+            <span class="word-tag">better</span>
+            <span class="word-tag">disappointed</span>
+          </div>
+        </div>
+        <div class="cluster cluster-c">
+          <div class="cluster-label">Cluster Label</div>
+          <div class="cluster-name">Expectation / Size Issues</div>
+          <span class="cluster-pct">~2%</span>
+          <p style="font-size:0.84rem;max-width:100%;margin:0">Reviews where the product didn't match the customer's expectations from the listing — typically around size, quantity, or color representation.</p>
+          <div class="word-tags">
+            <span class="word-tag">smaller</span>
+            <span class="word-tag">not as described</span>
+            <span class="word-tag">expected</span>
+            <span class="word-tag">listing</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:3rem">
+      <h3 class="reveal">Complaint Drivers — Detailed Breakdown</h3>
+      <p class="reveal">To move beyond broad labels like "Poor Quality", complaint drivers were specified into six granular categories. This breakdown clarifies the exact nature of dissatisfaction and enables more targeted product or listing improvements.</p>
+
+      <div class="complaint-list reveal" id="complaint-list">
+        <div class="complaint-row">
+          <span class="complaint-name">Quality Issues</span>
+          <div class="complaint-bar-wrap"><div class="complaint-bar" data-width="88"></div></div>
+          <span class="complaint-pct">26.4%</span>
+        </div>
+        <div class="complaint-row">
+          <span class="complaint-name">Color Issues</span>
+          <div class="complaint-bar-wrap"><div class="complaint-bar" data-width="65"></div></div>
+          <span class="complaint-pct">19.5%</span>
+        </div>
+        <div class="complaint-row">
+          <span class="complaint-name">Performance Issues</span>
+          <div class="complaint-bar-wrap"><div class="complaint-bar" data-width="60"></div></div>
+          <span class="complaint-pct">17.8%</span>
+        </div>
+        <div class="complaint-row">
+          <span class="complaint-name">Size Issues</span>
+          <div class="complaint-bar-wrap"><div class="complaint-bar" data-width="39"></div></div>
+          <span class="complaint-pct">11.5%</span>
+        </div>
+        <div class="complaint-row">
+          <span class="complaint-name">Smell Issues</span>
+          <div class="complaint-bar-wrap"><div class="complaint-bar" data-width="31"></div></div>
+          <span class="complaint-pct">9.1%</span>
+        </div>
+        <div class="complaint-row">
+          <span class="complaint-name">Quantity Issues</span>
+          <div class="complaint-bar-wrap"><div class="complaint-bar" data-width="28"></div></div>
+          <span class="complaint-pct">8.4%</span>
+        </div>
+      </div>
+
+
+    </div>
+
+    <div style="margin-top:3rem" class="reveal">
+      <h3>Key Insight</h3>
+      <div class="insight-box">
+        <p>Negative experiences were not random or vague — they were structured and recurring. Quality, color, and performance issues alone account for over 64% of all complaint drivers, suggesting clear, addressable areas for product development and listing optimization.</p>
+      </div>
+
+      <div class="detail-grid" style="margin-top:1.5rem">
+        <div class="detail-block">
+          <h3>Product Development</h3>
+          <p style="font-size:0.87rem">Quality (26.4%) and Performance (17.8%) complaints point directly to manufacturing or formulation issues. These are the highest-leverage areas for product improvement — fixing them addresses nearly half of all negative feedback.</p>
+        </div>
+        <div class="detail-block">
+          <h3>Listing Optimization</h3>
+          <p style="font-size:0.87rem">Color (19.5%), Size (11.5%), and Quantity (8.4%) complaints often reflect a mismatch between customer expectations and product listings. Better images, clearer descriptions, and accurate measurements could reduce these significantly.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONCLUSION -->
+  <section id="conclusion">
+    <div class="section-header reveal">
+      <span class="section-num">05</span>
+      <h2>Conclusion</h2>
+    </div>
+
+    <div class="conclusion-wrap reveal">
+      <h2>What the Data Tells Us</h2>
+      <p>By applying NLP preprocessing and K-Means clustering to 701,528 Amazon beauty reviews, we were able to identify and quantify the primary drivers of customer dissatisfaction. Negative experiences were not random — they were structured, recurring, and categorizable.</p>
+      <p style="margin-top:1rem">From highest to lowest: quality, color, performance, size, smell, and quantity are the most prominent complaint drivers. This ranking provides a prioritized roadmap for improvement.</p>
+
+      <h3>Business Takeaways</h3>
+      <div class="takeaway-grid">
+        <div class="takeaway">
+          <span class="takeaway-icon">🔧</span>
+          <h4>Product Development</h4>
+          <p>Quality and performance complaints (44.2% combined) are the highest-priority improvement areas. Addressing these would have the greatest impact on customer satisfaction and ratings.</p>
+        </div>
+        <div class="takeaway">
+          <span class="takeaway-icon">📋</span>
+          <h4>Listing Accuracy</h4>
+          <p>Color, size, and quantity complaints (39.4% combined) often stem from inaccurate listings. Clearer product descriptions and images could reduce these expectations gaps significantly.</p>
+        </div>
+        <div class="takeaway">
+          <span class="takeaway-icon">🏆</span>
+          <h4>Competitive Differentiation</h4>
+          <p>Understanding competitor weaknesses at this level of specificity creates direct opportunities to position a product as superior in the areas customers complain about most.</p>
+        </div>
+        <div class="takeaway">
+          <span class="takeaway-icon">🔄</span>
+          <h4>Transferable Framework</h4>
+          <p>This NLP + clustering pipeline can be applied to any review dataset — enabling similar insight extraction for market research, SEO keyword analysis, or customer experience audits.</p>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:2rem" class="reveal">
+      <h3 style="font-size:0.7rem;letter-spacing:0.12em;text-transform:uppercase;font-family:var(--sans);font-weight:400;color:var(--text-dim)">Tech Stack</h3>
+      <div class="stack-row">
+        <span class="stack-tag">Python</span>
+        <span class="stack-tag">pandas</span>
+        <span class="stack-tag">numpy</span>
+        <span class="stack-tag">scikit-learn</span>
+        <span class="stack-tag">K-Means</span>
+        <span class="stack-tag">NLTK</span>
+        <span class="stack-tag">spaCy</span>
+        <span class="stack-tag">matplotlib</span>
+        <span class="stack-tag">seaborn</span>
+        <span class="stack-tag">PySpark</span>
+        <span class="stack-tag">Hugging Face Datasets</span>
+        <span class="stack-tag">wordcloud</span>
+      </div>
+    </div>
+
+    <div style="margin-top:2rem" class="reveal">
+      <h3 style="font-size:0.7rem;letter-spacing:0.12em;text-transform:uppercase;font-family:var(--sans);font-weight:400;color:var(--text-dim)">References & Notes</h3>
+      <div class="card" style="font-size:0.78rem;color:var(--text-dim);line-height:2;margin-top:1rem">
+        Dataset: <a href="https://huggingface.co/datasets/jhan21/amazon-beauty-reviews-dataset" style="color:var(--accent);text-decoration:none">jhan21/amazon-beauty-reviews-dataset · Hugging Face</a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <span class="footer-text">Haley Yahiku · February 2026</span>
+  <a class="footer-link" href="https://huggingface.co/datasets/jhan21/amazon-beauty-reviews-dataset" target="_blank">↗ Dataset Source</a>
+</footer>
+
+<script>
+  // Scroll reveal
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add("visible"); });
+  }, { threshold: 0.07, rootMargin: "0px 0px -30px 0px" });
+  document.querySelectorAll(".reveal").forEach(el => observer.observe(el));
+
+  // Animate complaint bars when visible
+  const barObserver = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.querySelectorAll(".complaint-bar").forEach(bar => {
+          bar.style.width = bar.dataset.width + "%";
+        });
+        barObserver.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.3 });
+
+  const list = document.getElementById("complaint-list");
+  if (list) barObserver.observe(list);
+</script>
+</body>
+</html>
