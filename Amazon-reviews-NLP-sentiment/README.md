@@ -1,1 +1,1 @@
-[CLICK HERE TO VIEW PROJECT PAGE](https://hyahiku.github.io/YOUR-FOLDER-NAME/amazon-beauty-nlp.html)
+[CLICK HERE TO VIEW PROJECT PAGE](https://hyahiku.github.io/Amazon-reviews-NLP-sentiment/amazon-beauty-nlp.html)
