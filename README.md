@@ -1,14 +1,12 @@
-# Haley Yahiku
+# 👋 Haley Yahiku
 
-**B.S. Project Management · M.S. Data Analytics** &nbsp;|&nbsp; Honolulu, HI
-
-Data Analytics professional with a background in project management, data engineering, and machine learning. Experienced in transforming complex datasets into interpretable insights and building accessible data products. Prior experience spans construction project management, elevator installation, and laboratory operations — bringing cross-industry analytical perspective to data science work.
+**B.S. Project Management · M.S. Data Analytics** &nbsp;|&nbsp; 📍 Honolulu, HI
 
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-0A66C2?style=flat&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/haley-yahiku)
 
 ---
 
-## Skills
+## 🛠️ Skills
 
 **Languages & Libraries**
 `Python` `SQL` `pandas` `numpy` `scikit-learn` `matplotlib` `seaborn` `plotly` `scipy`
@@ -27,17 +25,17 @@ Data Analytics professional with a background in project management, data engine
 
 ---
 
-## Education
+## 🎓 Education
 
 | Degree | Field | Institution |
 |---|---|---|
-| Master of Science | Data Analytics | University of Nevada, Las Vegas |
-| Bachelor of Applied Science | Project Management | College of Southern Nevada |
-| Associate of Science | General Studies | College of Southern Nevada |
+| 🎓 Master of Science | Data Analytics | University of Nevada, Las Vegas |
+| 🎓 Bachelor of Applied Science | Project Management | College of Southern Nevada |
+| 🎓 Associate of Science | General Studies | College of Southern Nevada |
 
 ---
 
-## Projects
+## 📂 Projects
 
 ---
 
@@ -48,10 +46,10 @@ K-Means clustering segments 5,500+ Brazilian municipalities into four distinct c
 
 | | |
 |---|---|
-| **Dataset** | ~3.5M weekly climate observations · Hugging Face |
-| **Key Result** | 4 climate profiles identified · hybrid retrieval significantly outperformed semantic-only baseline |
+| 📊 **Dataset** | ~3.5M weekly climate observations · Hugging Face |
+| ✅ **Key Result** | 4 climate profiles identified · hybrid retrieval significantly outperformed semantic-only baseline |
 
-**Top Stack:** `K-Means` `sentence-transformers` `StandardScaler` `cosine similarity` `plotly`
+**🔧 Top Stack:** `K-Means` `sentence-transformers` `StandardScaler` `cosine similarity` `plotly`
 
 📄 [View Project Page](https://hyahiku.github.io/climate-segmentation-RAG%20system/climate-profile-segmentation.html) &nbsp;|&nbsp; 📓 [View Notebook](https://github.com/hyahiku/hyahiku.github.io/blob/main/climate-segmentation-RAG%20system/CODE.ipynb)
 
@@ -64,10 +62,10 @@ NLP preprocessing and K-Means clustering surface and quantify the primary driver
 
 | | |
 |---|---|
-| **Dataset** | 701,528 Amazon beauty reviews · Hugging Face |
-| **Key Result** | 6 quantified complaint categories · Quality Issues = 26.4% of all complaints |
+| 📊 **Dataset** | 701,528 Amazon beauty reviews · Hugging Face |
+| ✅ **Key Result** | 6 quantified complaint categories · Quality Issues = 26.4% of all complaints |
 
-**Top Stack:** `NLP` `NLTK` `spaCy` `K-Means` `TF-IDF` `PySpark` `wordcloud`
+**🔧 Top Stack:** `NLP` `NLTK` `spaCy` `K-Means` `TF-IDF` `PySpark` `wordcloud`
 
 📄 [View Project Page](https://hyahiku.github.io/Amazon-reviews-NLP-sentiment/amazon-beauty-nlp.html) &nbsp;|&nbsp; 📓 [View Notebook](https://github.com/hyahiku/hyahiku.github.io/blob/main/Amazon-reviews-NLP-sentiment/CODE.ipynb)
 
@@ -80,10 +78,10 @@ Apriori algorithm mines 18,536 transaction baskets for 275 association rules. Qu
 
 | | |
 |---|---|
-| **Dataset** | ~400K transactions · UCI Machine Learning Repository (Dec 2010 – Dec 2011) |
-| **Key Result** | 275 association rules · pink/green plate co-occurrence lift = 61.9× · 5 product clusters |
+| 📊 **Dataset** | ~400K transactions · UCI Machine Learning Repository (Dec 2010 – Dec 2011) |
+| ✅ **Key Result** | 275 association rules · pink/green plate co-occurrence lift = 61.9× · 5 product clusters |
 
-**Top Stack:** `Apriori (mlxtend)` `TfidfVectorizer` `K-Means` `association rules` `PySpark`
+**🔧 Top Stack:** `Apriori (mlxtend)` `TfidfVectorizer` `K-Means` `association rules` `PySpark`
 
 📄 [View Project Page](https://hyahiku.github.io/Retail-Association/online-retail-analysis.html) &nbsp;|&nbsp; 📓 [View Notebook](https://github.com/hyahiku/hyahiku.github.io/blob/main/Retail-Association/CODE.ipynb)
 
@@ -96,10 +94,10 @@ Investigates whether income level is a statistically significant predictor of as
 
 | | |
 |---|---|
-| **Dataset** | Risk Behavior Features · Kaggle |
-| **Key Result** | t = 2.894, p = 0.005 · F = 4.833, p = 0.0041 · H₀ rejected in both tests |
+| 📊 **Dataset** | Risk Behavior Features · Kaggle |
+| ✅ **Key Result** | t = 2.894, p = 0.005 · F = 4.833, p = 0.0041 · H₀ rejected in both tests |
 
-**Top Stack:** `scipy.stats` `t-test` `one-way ANOVA` `EDA` `seaborn` `matplotlib`
+**🔧 Top Stack:** `scipy.stats` `t-test` `one-way ANOVA` `EDA` `seaborn` `matplotlib`
 
 📄 [View Project Page](https://hyahiku.github.io/Financial-Behavior-Risk/financial-behavior-risk.html) &nbsp;|&nbsp; 📓 [View Notebook](https://github.com/hyahiku/hyahiku.github.io/blob/main/Financial-Behavior-Risk/CODE.ipynb)
 
@@ -112,10 +110,10 @@ Engineers a modular analytics pipeline across 12 regional fishery CSVs. Eight de
 
 | | |
 |---|---|
-| **Dataset** | 12 CSV files · 6 global regions · 2000–2015 · FAO Fishery Data |
-| **Key Result** | Per-country trade profiles on demand · 2016–2020 revenue growth forecast |
+| 📊 **Dataset** | 12 CSV files · 6 global regions · 2000–2015 · FAO Fishery Data |
+| ✅ **Key Result** | Per-country trade profiles on demand · 2016–2020 revenue growth forecast |
 
-**Top Stack:** `pandas` `numpy` `np.polyfit` `matplotlib` `CSV pipeline engineering` `CLI`
+**🔧 Top Stack:** `pandas` `numpy` `np.polyfit` `matplotlib` `CSV pipeline engineering` `CLI`
 
 📄 [View Project Page](https://hyahiku.github.io/Aquatic-Imports-Exports/aquatic-imports-exports.html) &nbsp;|&nbsp; 📓 [View Notebook](https://github.com/hyahiku/hyahiku.github.io/blob/main/Aquatic-Imports-Exports/CODE.py)
 
@@ -128,14 +126,14 @@ Investigates whether host flexibility (cancellation policy, instant booking, min
 
 | | |
 |---|---|
-| **Dataset** | 102,599 NYC Airbnb listings · insideairbnb.com |
-| **Key Result** | No correlation between flexibility and rating · strong price/service fee linear relationship identified |
+| 📊 **Dataset** | 102,599 NYC Airbnb listings · insideairbnb.com |
+| ✅ **Key Result** | No correlation between flexibility and rating · strong price/service fee linear relationship identified |
 
-**Top Stack:** `pandas` `seaborn` `matplotlib` `linear regression` `IQR outlier detection` `EDA`
+**🔧 Top Stack:** `pandas` `seaborn` `matplotlib` `linear regression` `IQR outlier detection` `EDA`
 
 📄 [View Project Page](https://hyahiku.github.io/Airbnb-Market%20Analysis/airbnb-exploratory-analysis.html)
 
 ---
 
-<sub>Last updated: May 2026</sub>
+<sub>🕐 Last updated: May 2026</sub>
 
