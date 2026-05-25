@@ -4,7 +4,7 @@
 
 Data Analytics professional with a background in project management, data engineering, and machine learning. Experienced in transforming complex datasets into interpretable insights and building accessible data products. Prior experience spans construction project management, elevator installation, and laboratory operations — bringing cross-industry analytical perspective to data science work.
 
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-0A66C2?style=flat&logo=linkedin&logoColor=white)](www.linkedin.com/in/haley-yahiku)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-0A66C2?style=flat&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/haley-yahiku)
 
 ---
 
@@ -53,7 +53,7 @@ K-Means clustering segments 5,500+ Brazilian municipalities into four distinct c
 
 **Top Stack:** `K-Means` `sentence-transformers` `StandardScaler` `cosine similarity` `plotly`
 
-📄 [View Project Page](#) &nbsp;|&nbsp; 📓 [View Notebook](./climate-segmentation-RAG%20system/CODE.ipynb)
+📄 [View Project Page](https://hyahiku.github.io/climate-segmentation-RAG%20system/climate-profile-segmentation.html) &nbsp;|&nbsp; 📓 [View Notebook](./climate-segmentation-RAG%20system/CODE.ipynb)
 
 ---
 
@@ -69,7 +69,7 @@ NLP preprocessing and K-Means clustering surface and quantify the primary driver
 
 **Top Stack:** `NLP` `NLTK` `spaCy` `K-Means` `TF-IDF` `PySpark` `wordcloud`
 
-📄 [View Project Page](#) &nbsp;|&nbsp; 📓 [View Notebook](#)
+📄 [View Project Page](https://hyahiku.github.io/Amazon-reviews-NLP-sentiment/amazon-beauty-nlp.html) &nbsp;|&nbsp; 📓 [View Notebook](#)
 
 ---
 
@@ -133,7 +133,7 @@ Investigates whether host flexibility (cancellation policy, instant booking, min
 
 **Top Stack:** `pandas` `seaborn` `matplotlib` `linear regression` `IQR outlier detection` `EDA`
 
-📄 [View Project Page](#) &nbsp;|&nbsp; 📓 [View Notebook](#)
+📄 [View Project Page](https://hyahiku.github.io/Airbnb-Market%20Analysis/airbnb-exploratory-analysis.html)
 
 ---
 
