@@ -29,9 +29,9 @@
 
 | Degree | Field | Institution |
 |---|---|---|
-| 🎓 Master of Science | Data Analytics | University of Nevada, Las Vegas |
-| 🎓 Bachelor of Applied Science | Project Management | College of Southern Nevada |
-| 🎓 Associate of Science | General Studies | College of Southern Nevada |
+|  Master of Science | Data Analytics | University of Nevada, Las Vegas |
+|  Bachelor of Applied Science | Project Management | College of Southern Nevada |
+|  Associate of Science | General Studies | College of Southern Nevada |
 
 ---
 
