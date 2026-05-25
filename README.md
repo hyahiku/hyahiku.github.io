@@ -53,7 +53,7 @@ K-Means clustering segments 5,500+ Brazilian municipalities into four distinct c
 
 **Top Stack:** `K-Means` `sentence-transformers` `StandardScaler` `cosine similarity` `plotly`
 
-📄 [View Project Page](https://hyahiku.github.io/climate-segmentation-RAG%20system/climate-profile-segmentation.html) &nbsp;|&nbsp; 📓 [View Notebook](./climate-segmentation-RAG%20system/CODE.ipynb)
+📄 [View Project Page](https://hyahiku.github.io/climate-segmentation-RAG%20system/climate-profile-segmentation.html) &nbsp;|&nbsp; 📓 [View Notebook](https://github.com/hyahiku/hyahiku.github.io/blob/main/climate-segmentation-RAG%20system/CODE.ipynb)
 
 ---
 
@@ -69,7 +69,7 @@ NLP preprocessing and K-Means clustering surface and quantify the primary driver
 
 **Top Stack:** `NLP` `NLTK` `spaCy` `K-Means` `TF-IDF` `PySpark` `wordcloud`
 
-📄 [View Project Page](https://hyahiku.github.io/Amazon-reviews-NLP-sentiment/amazon-beauty-nlp.html) &nbsp;|&nbsp; 📓 [View Notebook](#)
+📄 [View Project Page](https://hyahiku.github.io/Amazon-reviews-NLP-sentiment/amazon-beauty-nlp.html) &nbsp;|&nbsp; 📓 [View Notebook](https://github.com/hyahiku/hyahiku.github.io/blob/main/Amazon-reviews-NLP-sentiment/CODE.ipynb)
 
 ---
 
@@ -85,7 +85,7 @@ Apriori algorithm mines 18,536 transaction baskets for 275 association rules. Qu
 
 **Top Stack:** `Apriori (mlxtend)` `TfidfVectorizer` `K-Means` `association rules` `PySpark`
 
-📄 [View Project Page](https://hyahiku.github.io/Retail-Association/online-retail-analysis.html) &nbsp;|&nbsp; 📓 [View Notebook](./Retail-Association/776_Group_Project_Rev_1.ipynb)
+📄 [View Project Page](https://hyahiku.github.io/Retail-Association/online-retail-analysis.html) &nbsp;|&nbsp; 📓 [View Notebook](https://github.com/hyahiku/hyahiku.github.io/blob/main/Retail-Association/CODE.ipynb)
 
 ---
 
@@ -101,7 +101,7 @@ Investigates whether income level is a statistically significant predictor of as
 
 **Top Stack:** `scipy.stats` `t-test` `one-way ANOVA` `EDA` `seaborn` `matplotlib`
 
-📄 [View Project Page](https://hyahiku.github.io/Financial-Behavior-Risk/financial-behavior-risk.html) &nbsp;|&nbsp; 📓 [View Notebook](./Financial-Behavior-Risk/MIS_761_Final_Group_Project.ipynb)
+📄 [View Project Page](https://hyahiku.github.io/Financial-Behavior-Risk/financial-behavior-risk.html) &nbsp;|&nbsp; 📓 [View Notebook](https://github.com/hyahiku/hyahiku.github.io/blob/main/Financial-Behavior-Risk/CODE.ipynb)
 
 ---
 
@@ -117,7 +117,7 @@ Engineers a modular analytics pipeline across 12 regional fishery CSVs. Eight de
 
 **Top Stack:** `pandas` `numpy` `np.polyfit` `matplotlib` `CSV pipeline engineering` `CLI`
 
-📄 [View Project Page](https://hyahiku.github.io/Aquatic-Imports-Exports/aquatic-imports-exports.html) &nbsp;|&nbsp; 📓 [View Notebook](./Aquatic-Imports-Exports/DA622_Final_Project.py)
+📄 [View Project Page](https://hyahiku.github.io/Aquatic-Imports-Exports/aquatic-imports-exports.html) &nbsp;|&nbsp; 📓 [View Notebook](https://github.com/hyahiku/hyahiku.github.io/blob/main/Aquatic-Imports-Exports/CODE.py)
 
 ---
 
@@ -138,3 +138,4 @@ Investigates whether host flexibility (cancellation policy, instant booking, min
 ---
 
 <sub>Last updated: May 2026</sub>
+
