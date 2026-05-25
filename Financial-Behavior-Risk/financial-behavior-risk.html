@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Financial Risk Behavior Analysis · Portfolio</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,700;1,9..144,300;1,9..144,500&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #f7f5f0;
+    --surface: #ffffff;
+    --surface2: #f0ede6;
+    --border: #ddd9d0;
+    --accent: #1a4731;
+    --accent2: #2d7a52;
+    --accent-light: #e8f4ed;
+    --gold: #c4922a;
+    --gold-light: #fdf5e6;
+    --red: #c0392b;
+    --text: #1a1814;
+    --text-mid: #3d3830;
+    --text-dim: #8a8278;
+    --mono: 'DM Mono', monospace;
+    --serif: 'Fraunces', Georgia, serif;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { background: var(--bg); color: var(--text); font-family: var(--serif); font-weight: 300; line-height: 1.75; overflow-x: hidden; }
+
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 9999;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: rgba(247,245,240,0.92); backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1rem 3rem;
+  }
+  .nav-brand { font-family: var(--serif); font-size: 0.9rem; font-style: italic; color: var(--accent); }
+  .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+  .nav-links a { font-family: var(--mono); font-size: 0.65rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-dim); text-decoration: none; transition: color 0.2s; }
+  .nav-links a:hover { color: var(--accent); }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh; padding-top: 70px;
+    display: grid; grid-template-columns: 55% 45%;
+  }
+  .hero-left {
+    background: var(--accent); display: flex; flex-direction: column;
+    justify-content: flex-end; padding: 5rem 4rem; position: relative; overflow: hidden;
+  }
+  .hero-left::after {
+    content: ''; position: absolute; bottom: -120px; right: -120px;
+    width: 350px; height: 350px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(196,146,42,0.15) 0%, transparent 70%);
+  }
+  .hero-eyebrow {
+    font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.18em;
+    text-transform: uppercase; color: rgba(255,255,255,0.4); margin-bottom: 2rem;
+    display: flex; align-items: center; gap: 0.75rem;
+    opacity: 0; animation: fadeUp 0.6s 0.2s forwards;
+  }
+  .hero-eyebrow::before { content: ''; width: 24px; height: 1px; background: rgba(255,255,255,0.3); }
+  .hero-title {
+    font-family: var(--serif); font-size: clamp(2.2rem, 4.5vw, 4rem);
+    font-weight: 700; line-height: 1.05; color: #fff;
+    opacity: 0; animation: fadeUp 0.7s 0.35s forwards;
+  }
+  .hero-title em { font-style: italic; color: #a8d5b8; }
+  .hero-sub {
+    margin-top: 1.5rem; font-size: 0.92rem; color: rgba(255,255,255,0.5);
+    max-width: 440px; line-height: 1.7;
+    opacity: 0; animation: fadeUp 0.7s 0.5s forwards;
+  }
+  .hero-hypo {
+    margin-top: 2.5rem; padding: 1.5rem; border: 1px solid rgba(255,255,255,0.12);
+    background: rgba(255,255,255,0.05);
+    opacity: 0; animation: fadeUp 0.7s 0.65s forwards;
+  }
+  .hypo-label { font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.15em; text-transform: uppercase; color: rgba(255,255,255,0.35); margin-bottom: 0.5rem; }
+  .hypo-text { font-size: 0.88rem; color: rgba(255,255,255,0.7); font-style: italic; line-height: 1.6; }
+  .hero-right {
+    background: var(--surface2); display: flex; flex-direction: column;
+    justify-content: center; padding: 5rem 3.5rem; gap: 2rem;
+    opacity: 0; animation: fadeIn 1s 0.8s forwards;
+  }
+  .hero-stat { border-left: 2px solid var(--border); padding-left: 1.25rem; }
+  .hero-stat .val { font-family: var(--serif); font-size: 2.2rem; font-weight: 700; color: var(--accent); display: block; line-height: 1; }
+  .hero-stat .lbl { font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-dim); margin-top: 0.3rem; display: block; }
+  .hero-stat.gold .val { color: var(--gold); }
+
+  /* MAIN */
+  main { max-width: 1080px; margin: 0 auto; padding: 0 3rem 8rem; }
+  section { margin-top: 6rem; }
+  .section-header { display: flex; align-items: baseline; gap: 1.5rem; margin-bottom: 2.5rem; padding-bottom: 1rem; border-bottom: 2px solid var(--text); }
+  .section-num { font-family: var(--mono); font-size: 0.65rem; letter-spacing: 0.12em; color: var(--accent2); }
+  h2 { font-family: var(--serif); font-size: clamp(1.5rem, 3vw, 2.2rem); font-weight: 500; color: var(--text); }
+  h3 { font-family: var(--serif); font-size: 1.05rem; font-weight: 500; color: var(--text); margin-bottom: 0.5rem; }
+  p { font-size: 0.95rem; color: var(--text-mid); margin-bottom: 1rem; }
+  p:last-child { margin-bottom: 0; }
+
+  /* CARDS */
+  .card { background: var(--surface); border: 1px solid var(--border); padding: 2rem; transition: box-shadow 0.25s; }
+  .card:hover { box-shadow: 0 4px 20px rgba(0,0,0,0.06); }
+
+  /* GRIDS */
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--border); border: 1px solid var(--border); }
+  .two-col > * { background: var(--surface); padding: 2rem; }
+  .three-col { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); }
+  .three-col > * { background: var(--surface); padding: 2rem; }
+
+  /* STAT BAND */
+  .stat-band { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); margin-top: 2rem; }
+  .stat-item { background: var(--surface); padding: 1.75rem; text-align: center; }
+  .stat-val { font-family: var(--serif); font-size: 1.8rem; font-weight: 700; color: var(--accent); display: block; line-height: 1; margin-bottom: 0.4rem; }
+  .stat-val.gold { color: var(--gold); }
+  .stat-val.red { color: var(--red); }
+  .stat-lbl { font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-dim); }
+
+  /* HYPOTHESIS BOX */
+  .hypo-box { padding: 2rem; margin: 1.5rem 0; border: 1px solid var(--border); position: relative; }
+  .hypo-box::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; }
+  .h0::before { background: var(--red); }
+  .h1::before { background: var(--accent2); }
+  .hypo-box .label { font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 0.5rem; }
+  .h0 .label { color: var(--red); }
+  .h1 .label { color: var(--accent2); }
+  .hypo-box p { font-style: italic; font-size: 0.95rem; margin: 0; }
+
+  /* EQ BLOCK */
+  .eq-block { background: var(--surface2); border: 1px solid var(--border); border-left: 3px solid var(--accent); padding: 1.5rem 2rem; margin: 1.5rem 0; }
+  .eq-label { font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--accent2); margin-bottom: 0.6rem; }
+  .eq { font-family: var(--mono); font-size: 0.88rem; color: var(--text); line-height: 1.8; }
+  .eq .var { color: var(--accent); font-style: italic; }
+  .eq-note { font-size: 0.84rem; color: var(--text-dim); margin-top: 0.6rem; margin-bottom: 0; font-family: var(--serif); }
+
+  /* RESULT CARD */
+  .result-card { background: var(--surface); border: 1px solid var(--border); padding: 2rem; position: relative; overflow: hidden; }
+  .result-card::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 3px; }
+  .result-card.sig::after { background: var(--accent2); }
+  .result-card.label { font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 1rem; }
+  .result-metrics { display: flex; gap: 2rem; margin: 1.25rem 0; }
+  .result-metric .mv { font-family: var(--serif); font-size: 1.8rem; font-weight: 700; color: var(--accent); display: block; line-height: 1; }
+  .result-metric .ml { font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-dim); margin-top: 0.2rem; display: block; }
+  .reject-badge { display: inline-block; font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.12em; text-transform: uppercase; padding: 0.3rem 0.75rem; background: var(--accent-light); border: 1px solid var(--accent2); color: var(--accent); margin-top: 0.75rem; }
+
+  /* INSIGHT */
+  .insight { background: var(--accent-light); border: 1px solid rgba(45,122,82,0.2); padding: 1.5rem 2rem; margin: 1.5rem 0; }
+  .insight p { color: var(--text); margin: 0; font-size: 0.95rem; }
+
+  .gold-insight { background: var(--gold-light); border: 1px solid rgba(196,146,42,0.2); padding: 1.5rem 2rem; margin: 1.5rem 0; }
+  .gold-insight p { color: var(--text); margin: 0; font-size: 0.95rem; }
+
+  /* STEPS */
+  .steps { display: flex; flex-direction: column; gap: 1px; background: var(--border); border: 1px solid var(--border); margin-top: 2rem; }
+  .step { background: var(--surface); padding: 1.75rem 2rem; display: grid; grid-template-columns: 60px 1fr; gap: 1.5rem; align-items: start; transition: background 0.2s; }
+  .step:hover { background: var(--surface2); }
+  .step-num { font-family: var(--serif); font-size: 2rem; font-weight: 700; color: var(--border); line-height: 1; }
+  .step-content h3 { font-size: 0.8rem; font-family: var(--mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent2); margin-bottom: 0.5rem; }
+  .step-content p { font-size: 0.88rem; margin: 0; }
+
+  /* TAKEAWAYS */
+  .takeaways { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--border); border: 1px solid var(--border); margin-top: 2rem; }
+  .takeaway { background: var(--surface); padding: 2rem; transition: background 0.2s; }
+  .takeaway:hover { background: var(--surface2); }
+  .takeaway-icon { font-size: 1.3rem; margin-bottom: 0.75rem; display: block; }
+
+  /* STACK */
+  .stack { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1.5rem; }
+  .stack-pill { font-family: var(--mono); font-size: 0.65rem; padding: 0.3rem 0.75rem; border: 1px solid var(--border); color: var(--text-dim); background: var(--surface); transition: border-color 0.2s, color 0.2s; }
+  .stack-pill:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* FOOTER */
+  footer { border-top: 1px solid var(--border); padding: 2rem 3rem; display: flex; justify-content: space-between; align-items: center; max-width: 1080px; margin: 0 auto; }
+  .footer-text { font-family: var(--mono); font-size: 0.65rem; letter-spacing: 0.08em; color: var(--text-dim); }
+  .footer-link { font-family: var(--mono); font-size: 0.65rem; color: var(--accent2); text-decoration: none; }
+  .footer-link:hover { opacity: 0.7; }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  .reveal { opacity: 0; transform: translateY(14px); transition: opacity 0.6s, transform 0.6s; }
+  .reveal.visible { opacity: 1; transform: none; }
+
+  @media (max-width: 900px) {
+    nav { padding: 1rem 1.25rem; }
+    .nav-links { display: none; }
+    .hero { grid-template-columns: 1fr; }
+    .hero-right { padding: 3rem 2rem; }
+    main { padding: 0 1.25rem 5rem; }
+    .two-col, .three-col, .takeaways { grid-template-columns: 1fr; }
+    .stat-band { grid-template-columns: repeat(2, 1fr); }
+    footer { flex-direction: column; gap: 0.75rem; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <span class="nav-brand">Portfolio</span>
+  <ul class="nav-links">
+    <li><a href="#overview">Overview</a></li>
+    <li><a href="#data">Data</a></li>
+    <li><a href="#eda">EDA</a></li>
+    <li><a href="#tests">Tests</a></li>
+    <li><a href="#conclusion">Conclusion</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-left">
+    <div class="hero-eyebrow">Inferential Statistics · EDA · Hypothesis Testing</div>
+    <h1 class="hero-title">Income &<br><em>Asset Value</em><br>Risk Behavior<br>Analysis</h1>
+    <p class="hero-sub">Investigating whether income level is a statistically significant predictor of asset accumulation — using correlation analysis, t-tests, and one-way ANOVA across income quartiles.</p>
+    <div class="hero-hypo">
+      <div class="hypo-label">Alternative Hypothesis (H₁)</div>
+      <div class="hypo-text">There is a significant relationship between a person's income and their accumulated asset value.</div>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="hero-stat">
+      <span class="val">p = 0.0050</span>
+      <span class="lbl">T-test p-value (α = 0.05)</span>
+    </div>
+    <div class="hero-stat gold">
+      <span class="val">p = 0.0041</span>
+      <span class="lbl">ANOVA p-value (α = 0.05)</span>
+    </div>
+    <div class="hero-stat">
+      <span class="val">t = 2.894</span>
+      <span class="lbl">T-statistic</span>
+    </div>
+    <div class="hero-stat gold">
+      <span class="val">F = 4.833</span>
+      <span class="lbl">F-statistic</span>
+    </div>
+  </div>
+</div>
+
+<main>
+
+  <!-- OVERVIEW -->
+  <section id="overview">
+    <div class="section-header reveal">
+      <span class="section-num">01</span>
+      <h2>Overview & Motivation</h2>
+    </div>
+
+    <div class="two-col reveal">
+      <div>
+        <h3>Why This Dataset?</h3>
+        <p>The Risk Behavior Features dataset contains demographic, educational, and financial information about individuals — including age, education level, credit score, income, and asset value. It was selected because the data was complete and straightforward: columns held sensible, directly interpretable values without requiring domain-specific transformation.</p>
+        <p>The core question driving the analysis: what factors most strongly indicate a person's income or asset value? The assumption going in — that higher education or age might correlate with higher income — was treated as a hypothesis to test rigorously rather than accept at face value.</p>
+      </div>
+      <div style="background:var(--surface2)">
+        <h3>Real-World Application</h3>
+        <p>This type of analysis has direct applications in financial services. Banks, lenders, and credit institutions are deeply interested in understanding the relationship between income levels and financial health indicators like asset value. Specifically:</p>
+        <p style="font-size:0.87rem">Categorizing clients by their likelihood to repay loans based on debt-to-income ratios. Using demographic and financial data to assess the overall health of a client's financial position. Determining risk levels for loan approval decisions.</p>
+        <p style="font-size:0.87rem">The analysis focuses on the most correlated factors to build, test, and interpret a testable hypothesis about this income-asset relationship.</p>
+      </div>
+    </div>
+
+    <div style="margin-top:2rem" class="reveal">
+      <h3>Hypothesis Framework</h3>
+      <div class="hypo-box h0">
+        <div class="label">Null Hypothesis — H₀</div>
+        <p>There is no significant relationship between different income levels and asset accumulation.</p>
+      </div>
+      <div class="hypo-box h1">
+        <div class="label">Alternative Hypothesis — H₁</div>
+        <p>There is a significant relationship between a person's income and their accumulated asset value.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- DATA -->
+  <section id="data">
+    <div class="section-header reveal">
+      <span class="section-num">02</span>
+      <h2>Dataset & Cleaning</h2>
+    </div>
+
+    <p class="reveal">The <a href="https://www.kaggle.com/datasets/doublevvvvv/risk-behavior-features-analysis" style="color:var(--accent2);text-decoration:none">Risk Behavior Features dataset</a> (Kaggle) contains individual-level demographic and financial records including age, education, credit score, income, and asset value. The target variables for this analysis were <code style="font-family:var(--mono);font-size:0.85em;background:var(--surface2);padding:0.1rem 0.4rem;border:1px solid var(--border)">Income</code> and <code style="font-family:var(--mono);font-size:0.85em;background:var(--surface2);padding:0.1rem 0.4rem;border:1px solid var(--border)">Assets Value</code>.</p>
+
+    <div class="steps reveal">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <h3>Remove Missing Values</h3>
+          <p>All rows containing empty or null values were dropped entirely. Leaving missing data in place risks distorting statistical calculations — particularly means and standard deviations — which are the foundation of both the t-test and ANOVA. Complete, accurate observations are non-negotiable for inferential testing.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <h3>Convert Categorical Variables to Dummy Variables</h3>
+          <p>Categorical columns (e.g. education level, employment type) were converted into binary dummy variables — one column per category, with 1 indicating presence and 0 indicating absence. Most statistical modeling techniques require numerical inputs; this conversion makes categorical information usable in correlation analysis and regression without introducing ordinal assumptions.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <h3>Define Income Groups</h3>
+          <p>For the t-test: the dataset's median income was calculated and used as a threshold. Individuals above the median were classified as high-income; those at or below as low-income. For ANOVA: the dataset was divided into four income quartiles — low, mid-low, mid-high, and high — to enable a broader view of the full income spectrum rather than just two extremes.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- EDA -->
+  <section id="eda">
+    <div class="section-header reveal">
+      <span class="section-num">03</span>
+      <h2>Exploratory Data Analysis</h2>
+    </div>
+
+    <p class="reveal">Before any inferential testing, EDA was conducted to build intuition about the data and surface patterns worth investigating. Three tools were used in sequence — correlation heatmap, histograms, and descriptive statistics — each adding a different layer of understanding.</p>
+
+    <div class="three-col reveal" style="margin-top:2rem">
+      <div>
+        <h3>Correlation Heatmap</h3>
+        <p style="font-size:0.87rem">A matrix of correlation coefficients across all numerical variables. Color intensity encodes relationship strength — warmer colors (red) indicate positive correlation, cooler colors (blue) indicate negative correlation.</p>
+        <p style="font-size:0.87rem"><strong>Key finding:</strong> The correlation coefficient between Income and Assets Value was close to 1, signaling a strong positive linear association. This was the visual trigger for the formal hypothesis.</p>
+      </div>
+      <div style="background:var(--surface2)">
+        <h3>Histograms</h3>
+        <p style="font-size:0.87rem">Distribution plots for both Income and Assets Value. Income showed a slight right-skewed distribution with a large concentration of individuals at the lower end of the scale — a visible clustering near lower values.</p>
+        <p style="font-size:0.87rem">Assets Value appeared more spread out across a wider range. This distributional difference hinted at income inequality and motivated the comparison between income groups.</p>
+      </div>
+      <div>
+        <h3>Descriptive Statistics</h3>
+        <p style="font-size:0.87rem">Means, standard deviations, and quartiles were computed to validate visual findings. The most notable observation: both Income and Assets Value had <strong>relatively high standard deviations</strong>, indicating wide spread across individuals.</p>
+        <p style="font-size:0.87rem">Importantly, the high standard deviation of Income was not visually obvious from the histogram alone — the clustering at the lower end masked the spread. This demonstrates why visual and statistical analysis must complement each other.</p>
+      </div>
+    </div>
+
+    <div class="gold-insight reveal">
+      <p><strong>Methodological note:</strong> The high standard deviation in Income would not have been noticed without the histogram, and the clustering in the histogram would not have been quantified without the descriptive statistics. Neither tool alone tells the full story — the combination of visualization and summary statistics was essential to building a well-grounded hypothesis.</p>
+    </div>
+  </section>
+
+  <!-- TESTS -->
+  <section id="tests">
+    <div class="section-header reveal">
+      <span class="section-num">04</span>
+      <h2>Statistical Tests</h2>
+    </div>
+
+    <!-- T-TEST -->
+    <div class="reveal">
+      <h3>Test 1 — Independent Samples T-Test</h3>
+      <p>The independent t-test was chosen as the first inferential tool because the goal was to compare average asset values between exactly two independent groups: those earning above the median income and those earning at or below it. The t-test is purpose-built for this scenario — testing whether the difference in group means is statistically significant or likely due to random sampling variation.</p>
+
+      <div class="eq-block">
+        <div class="eq-label">T-Statistic Formula</div>
+        <div class="eq"><span class="var">t</span> = (x̄₁ − x̄₂) / √(s₁²/n₁ + s₂²/n₂)</div>
+        <p class="eq-note">Where x̄₁ and x̄₂ are the sample means of the high- and low-income groups, s₁² and s₂² are their variances, and n₁ and n₂ are the sample sizes. A larger t-statistic indicates a greater difference between group means relative to the variability within groups.</p>
+      </div>
+
+      <div class="eq-block">
+        <div class="eq-label">Group Definition</div>
+        <div class="eq">
+          High-income: <span class="var">Income > median(Income)</span><br>
+          Low-income: <span class="var">Income ≤ median(Income)</span>
+        </div>
+        <p class="eq-note">The median was used as the threshold rather than an arbitrary cut-off, ensuring the two groups are of roughly equal size and that the split is data-driven rather than assumption-driven.</p>
+      </div>
+
+      <div class="result-card sig reveal" style="margin-top:1.5rem">
+        <div style="font-family:var(--mono);font-size:0.6rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--accent2);margin-bottom:1rem">T-Test Results</div>
+        <div class="result-metrics">
+          <div class="result-metric"><span class="mv">2.8942</span><span class="ml">T-Statistic</span></div>
+          <div class="result-metric"><span class="mv">0.0050</span><span class="ml">P-Value</span></div>
+          <div class="result-metric"><span class="mv">0.05</span><span class="ml">Alpha (α)</span></div>
+        </div>
+        <p style="font-size:0.87rem">Since p = 0.0050 &lt; α = 0.05, the difference in means is statistically significant — unlikely to have occurred by random chance. We reject H₀.</p>
+        <span class="reject-badge">✓ Null Hypothesis Rejected</span>
+      </div>
+
+      <div class="insight reveal">
+        <p>The t-test result provides statistically significant evidence that individuals in the high-income group tend to have higher asset values than those in the low-income group. This confirms the direction of the association observed in the heatmap and histogram.</p>
+      </div>
+    </div>
+
+    <!-- ANOVA -->
+    <div style="margin-top:3rem" class="reveal">
+      <h3>Test 2 — One-Way ANOVA</h3>
+      <p>While the t-test confirmed a significant difference between two income groups, one-way ANOVA was conducted to extend the analysis across the full income spectrum. ANOVA allows comparison of means across three or more independent groups simultaneously — in this case, four income quartiles.</p>
+      <p>This matters because a binary split (above/below median) can obscure trends within each half. ANOVA reveals whether the income-asset relationship holds consistently across the entire range, or whether it is concentrated at particular thresholds.</p>
+
+      <div class="eq-block">
+        <div class="eq-label">F-Statistic Formula</div>
+        <div class="eq"><span class="var">F</span> = Between-group variance / Within-group variance</div>
+        <div class="eq" style="margin-top:0.5rem"><span class="var">F</span> = [Σnᵢ(x̄ᵢ − x̄)² / (k−1)] / [ΣΣ(xᵢⱼ − x̄ᵢ)² / (N−k)]</div>
+        <p class="eq-note">Where k = number of groups (4 quartiles), N = total observations, x̄ᵢ = mean of group i, and x̄ = grand mean. A large F-statistic means the variation between group means is large relative to the variation within groups — indicating that group membership (income quartile) explains a meaningful portion of the variance in asset values.</p>
+      </div>
+
+      <div class="eq-block">
+        <div class="eq-label">Income Quartile Groups</div>
+        <div class="eq">
+          Q1: <span class="var">Low income</span> (0–25th percentile)<br>
+          Q2: <span class="var">Mid-low income</span> (25th–50th percentile)<br>
+          Q3: <span class="var">Mid-high income</span> (50th–75th percentile)<br>
+          Q4: <span class="var">High income</span> (75th–100th percentile)
+        </div>
+        <p class="eq-note">Quartile-based grouping provides a broader, more nuanced view of income-asset relationships than a binary median split, revealing how asset values vary across the entire income spectrum.</p>
+      </div>
+
+      <div class="result-card sig reveal" style="margin-top:1.5rem">
+        <div style="font-family:var(--mono);font-size:0.6rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--accent2);margin-bottom:1rem">ANOVA Results</div>
+        <div class="result-metrics">
+          <div class="result-metric"><span class="mv">4.8333</span><span class="ml">F-Statistic</span></div>
+          <div class="result-metric"><span class="mv">0.0041</span><span class="ml">P-Value</span></div>
+          <div class="result-metric"><span class="mv">0.05</span><span class="ml">Alpha (α)</span></div>
+        </div>
+        <p style="font-size:0.87rem">Since p = 0.0041 &lt; α = 0.05, mean asset values differ significantly across the four income quartiles. We again reject H₀.</p>
+        <span class="reject-badge">✓ Null Hypothesis Rejected</span>
+      </div>
+
+      <div class="insight reveal">
+        <p>The ANOVA result strengthens the conclusion from the t-test — the income-asset relationship is not just a binary phenomenon between two groups. It holds across the full income distribution, with statistically significant variation in average asset values at each quartile level.</p>
+      </div>
+    </div>
+
+    <!-- COMPARISON -->
+    <div style="margin-top:3rem" class="reveal">
+      <h3>Why Both Tests — T-Test vs. ANOVA</h3>
+      <div class="two-col">
+        <div>
+          <div style="font-family:var(--mono);font-size:0.6rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-dim);margin-bottom:0.75rem">Independent T-Test</div>
+          <p style="font-size:0.87rem">Compares exactly two groups. Used here to test the most fundamental version of the hypothesis: is there any difference at all between high and low earners? Simpler and more powerful for a two-group comparison, but limited in scope.</p>
+        </div>
+        <div style="background:var(--surface2)">
+          <div style="font-family:var(--mono);font-size:0.6rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-dim);margin-bottom:0.75rem">One-Way ANOVA</div>
+          <p style="font-size:0.87rem">Extends the comparison to four groups simultaneously. Used to confirm the relationship across the full income spectrum and detect whether differences exist at granular quartile levels — not just between two extremes. Complements the t-test by adding breadth.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONCLUSION -->
+  <section id="conclusion">
+    <div class="section-header reveal">
+      <span class="section-num">05</span>
+      <h2>Conclusion</h2>
+    </div>
+
+    <p class="reveal">Through a structured pipeline of data cleaning, exploratory analysis, and inferential testing, this analysis uncovered statistically significant evidence that income level is meaningfully associated with asset value. Both the t-test (p = 0.0050) and ANOVA (p = 0.0041) returned p-values well below the 0.05 significance threshold, allowing confident rejection of the null hypothesis in both cases.</p>
+
+    <div class="insight reveal">
+      <p><strong>Core finding:</strong> With increased income comes increased asset value — and this relationship holds not just between two extremes, but consistently across the full income quartile spectrum.</p>
+    </div>
+
+    <div class="takeaways reveal">
+      <div class="takeaway">
+        <span class="takeaway-icon">🔍</span>
+        <h3>EDA + Statistics Are Complementary</h3>
+        <p style="font-size:0.87rem">The high standard deviation in Income would have been missed without the histogram. The clustering in the histogram would not have been quantified without descriptive statistics. Neither tool alone tells the full story — both are necessary to avoid overlooking significant patterns.</p>
+      </div>
+      <div class="takeaway">
+        <span class="takeaway-icon">🏦</span>
+        <h3>Financial Risk Profiling</h3>
+        <p style="font-size:0.87rem">These findings have direct applicability in banking and lending. A client's income level serves as a statistically grounded proxy for asset accumulation, which in turn informs debt-to-income ratio assessments and loan risk categorization.</p>
+      </div>
+      <div class="takeaway">
+        <span class="takeaway-icon">📊</span>
+        <h3>Two Tests, Consistent Signal</h3>
+        <p style="font-size:0.87rem">Running both a t-test and ANOVA was not redundant — the t-test confirmed a binary difference exists, while the ANOVA confirmed the pattern holds granularly across all four income quartiles. The consistency across both methods strengthens confidence in the finding.</p>
+      </div>
+      <div class="takeaway">
+        <span class="takeaway-icon">🎯</span>
+        <h3>Direction for Future Analysis</h3>
+        <p style="font-size:0.87rem">This analysis identifies a significant bivariate relationship. Future work could extend this to multivariate regression — incorporating education, age, and credit score simultaneously — to model the combined predictive power of all demographic factors on asset value.</p>
+      </div>
+    </div>
+
+    <div style="margin-top:2.5rem" class="reveal">
+      <h3 style="font-family:var(--mono);font-size:0.62rem;letter-spacing:0.12em;text-transform:uppercase;font-weight:400;color:var(--text-dim)">Tech Stack</h3>
+      <div class="stack">
+        <span class="stack-pill">Python</span>
+        <span class="stack-pill">pandas</span>
+        <span class="stack-pill">numpy</span>
+        <span class="stack-pill">scipy.stats</span>
+        <span class="stack-pill">t-test (independent)</span>
+        <span class="stack-pill">one-way ANOVA</span>
+        <span class="stack-pill">matplotlib</span>
+        <span class="stack-pill">seaborn</span>
+      </div>
+    </div>
+
+    <div style="margin-top:2rem" class="reveal">
+      <h3 style="font-family:var(--mono);font-size:0.62rem;letter-spacing:0.12em;text-transform:uppercase;font-weight:400;color:var(--text-dim)">References</h3>
+      <div class="card" style="font-size:0.78rem;color:var(--text-dim);line-height:2;margin-top:1rem">
+        Vivland. (2025). <em>Risk Behavior Features Analysis.</em> Kaggle.
+        <a href="https://www.kaggle.com/datasets/doublevvvvv/risk-behavior-features-analysis" style="color:var(--accent2);text-decoration:none">kaggle.com/datasets/doublevvvvv/risk-behavior-features-analysis</a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <span class="footer-text">Financial Risk Behavior Analysis · Portfolio</span>
+  <a class="footer-link" href="https://www.kaggle.com/datasets/doublevvvvv/risk-behavior-features-analysis" target="_blank">↗ Dataset Source</a>
+</footer>
+
+<script>
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add("visible"); });
+  }, { threshold: 0.07, rootMargin: "0px 0px -30px 0px" });
+  document.querySelectorAll(".reveal").forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
