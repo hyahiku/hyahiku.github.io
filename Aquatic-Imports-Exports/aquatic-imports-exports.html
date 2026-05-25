@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Global Aquaculture Trade Analysis · Portfolio</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@200;300;400;500;600;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #040d14;
+    --surface: #071520;
+    --surface2: #0c1f2e;
+    --border: #122336;
+    --accent: #00b4d8;
+    --accent2: #48cae4;
+    --accent3: #90e0ef;
+    --gold: #f4a261;
+    --muted: #1e3a4f;
+    --text: #caf0f8;
+    --text-mid: #7fb8cc;
+    --text-dim: #3d7a94;
+    --mono: 'Space Mono', monospace;
+    --sans: 'Outfit', sans-serif;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { background: var(--bg); color: var(--text); font-family: var(--sans); font-weight: 300; line-height: 1.75; overflow-x: hidden; }
+
+  /* ocean wave bg */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background:
+      radial-gradient(ellipse 80% 50% at 50% -10%, rgba(0,180,216,0.08) 0%, transparent 60%),
+      radial-gradient(ellipse 40% 30% at 80% 90%, rgba(0,180,216,0.04) 0%, transparent 60%);
+    pointer-events: none; z-index: 0;
+  }
+
+  /* subtle grid */
+  body::after {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px);
+    background-size: 60px 60px; opacity: 0.15;
+    mask-image: radial-gradient(ellipse 100% 100% at 50% 0%, black 0%, transparent 80%);
+    pointer-events: none; z-index: 0;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: rgba(4,13,20,0.88); backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1rem 2.5rem;
+  }
+  .nav-brand { font-family: var(--mono); font-size: 0.72rem; color: var(--accent); letter-spacing: 0.1em; }
+  .nav-links { display: flex; gap: 2rem; list-style: none; }
+  .nav-links a { font-family: var(--mono); font-size: 0.62rem; color: var(--text-dim); text-decoration: none; letter-spacing: 0.1em; text-transform: uppercase; transition: color 0.2s; }
+  .nav-links a:hover { color: var(--accent); }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh; padding-top: 70px;
+    display: flex; flex-direction: column; justify-content: flex-end;
+    padding: 70px 2.5rem 5rem; position: relative; z-index: 1;
+  }
+  .hero-tag {
+    font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.18em;
+    text-transform: uppercase; color: var(--accent); margin-bottom: 1.5rem;
+    display: flex; align-items: center; gap: 0.75rem;
+    opacity: 0; animation: fadeUp 0.6s 0.2s forwards;
+  }
+  .hero-tag::before { content: ''; width: 24px; height: 1px; background: var(--accent); }
+  .hero-title {
+    font-family: var(--sans); font-size: clamp(2.8rem, 6vw, 5.5rem);
+    font-weight: 700; line-height: 1.0; color: #fff; max-width: 900px;
+    opacity: 0; animation: fadeUp 0.7s 0.35s forwards;
+  }
+  .hero-title .hl { color: var(--accent); }
+  .hero-sub {
+    margin-top: 1.5rem; font-size: 1rem; color: var(--text-dim);
+    max-width: 580px; line-height: 1.7;
+    opacity: 0; animation: fadeUp 0.7s 0.5s forwards;
+  }
+  .hero-chips {
+    margin-top: 2.5rem; display: flex; flex-wrap: wrap; gap: 0.6rem;
+    opacity: 0; animation: fadeUp 0.7s 0.65s forwards;
+  }
+  .chip { font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.08em; padding: 0.3rem 0.8rem; border: 1px solid var(--border); color: var(--text-dim); background: var(--surface); }
+  .chip.accent { border-color: var(--accent); color: var(--accent); background: rgba(0,180,216,0.06); }
+
+  /* MAIN */
+  main { max-width: 1080px; margin: 0 auto; padding: 0 2.5rem 8rem; position: relative; z-index: 1; }
+  section { margin-top: 6rem; }
+  .section-label {
+    font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.18em;
+    text-transform: uppercase; color: var(--accent); display: flex;
+    align-items: center; gap: 1rem; margin-bottom: 2.5rem;
+  }
+  .section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+  h2 { font-family: var(--sans); font-size: clamp(1.6rem, 3vw, 2.4rem); font-weight: 600; color: #fff; margin-bottom: 1rem; }
+  h3 { font-family: var(--sans); font-size: 0.95rem; font-weight: 500; color: var(--accent2); margin-bottom: 0.5rem; }
+  p { font-size: 0.95rem; color: var(--text-mid); margin-bottom: 1rem; }
+  p:last-child { margin-bottom: 0; }
+
+  /* CARDS */
+  .card { background: var(--surface); border: 1px solid var(--border); padding: 2rem; transition: border-color 0.25s; }
+  .card:hover { border-color: var(--muted); }
+
+  /* GRIDS */
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--border); border: 1px solid var(--border); }
+  .two-col > * { background: var(--surface); padding: 2rem; }
+  .three-col { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); }
+  .three-col > * { background: var(--surface); padding: 2rem; }
+
+  /* STAT BAND */
+  .stat-band { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); margin-top: 2rem; }
+  .stat-item { background: var(--surface); padding: 1.75rem; text-align: center; }
+  .stat-val { font-family: var(--sans); font-size: 1.8rem; font-weight: 700; color: var(--accent); display: block; line-height: 1; margin-bottom: 0.4rem; }
+  .stat-lbl { font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-dim); }
+
+  /* CODE BLOCK */
+  .code-block { background: #020a0f; border: 1px solid var(--border); padding: 1.5rem; margin: 1.5rem 0; overflow-x: auto; border-left: 3px solid var(--accent); }
+  .code-block pre { font-family: var(--mono); font-size: 0.75rem; color: var(--text-mid); line-height: 1.8; }
+  .code-block .kw { color: var(--accent2); }
+  .code-block .fn { color: var(--gold); }
+  .code-block .cm { color: var(--text-dim); }
+  .code-block .str { color: #7ec8a4; }
+  .code-block .num { color: var(--gold); }
+
+  /* FUNCTION CARDS */
+  .fn-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); margin-top: 2rem; }
+  .fn-card { background: var(--surface); padding: 1.75rem; transition: background 0.2s; position: relative; overflow: hidden; }
+  .fn-card:hover { background: var(--surface2); }
+  .fn-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: var(--accent); opacity: 0.4; }
+  .fn-name { font-family: var(--mono); font-size: 0.75rem; color: var(--gold); margin-bottom: 0.5rem; }
+  .fn-sig { font-family: var(--mono); font-size: 0.65rem; color: var(--text-dim); margin-bottom: 0.75rem; }
+  .fn-desc { font-size: 0.85rem; color: var(--text-mid); line-height: 1.6; }
+
+  /* OUTPUT EXAMPLE */
+  .output-box {
+    background: #020a0f; border: 1px solid var(--border); padding: 2rem;
+    margin: 1.5rem 0; position: relative;
+  }
+  .output-label { font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-dim); margin-bottom: 1rem; }
+  .output-text { font-family: var(--mono); font-size: 0.82rem; color: var(--text-mid); line-height: 2; }
+  .output-text .country { color: var(--accent); font-weight: 700; }
+  .output-text .num { color: var(--gold); }
+
+  /* INSIGHT */
+  .insight { background: rgba(0,180,216,0.05); border: 1px solid rgba(0,180,216,0.15); padding: 1.5rem 2rem; margin: 1.5rem 0; }
+  .insight p { color: var(--text); margin: 0; font-size: 0.95rem; }
+
+  /* STEPS */
+  .steps { display: flex; flex-direction: column; gap: 1px; background: var(--border); border: 1px solid var(--border); margin-top: 2rem; }
+  .step { background: var(--surface); padding: 1.75rem 2rem; display: grid; grid-template-columns: 56px 1fr; gap: 1.5rem; align-items: start; transition: background 0.2s; }
+  .step:hover { background: var(--surface2); }
+  .step-num { font-family: var(--sans); font-size: 2rem; font-weight: 700; color: var(--border); line-height: 1; }
+  .step-title { font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.4rem; }
+  .step p { font-size: 0.88rem; margin: 0; }
+
+  /* FLOW */
+  .flow { display: flex; flex-direction: column; gap: 1px; background: var(--border); border: 1px solid var(--border); margin-top: 2rem; }
+  .flow-row { background: var(--surface); padding: 1.5rem 2rem; display: grid; grid-template-columns: 160px 1fr; gap: 2rem; align-items: start; transition: background 0.2s; }
+  .flow-row:hover { background: var(--surface2); }
+  .flow-stage { font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); padding-top: 0.15rem; }
+  .flow-row p { font-size: 0.87rem; margin: 0; }
+
+  /* CONCLUSION */
+  .conclusion-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--border); border: 1px solid var(--border); margin-top: 2rem; }
+  .conclusion-card { background: var(--surface); padding: 2rem; transition: background 0.2s; }
+  .conclusion-card:hover { background: var(--surface2); }
+  .conclusion-icon { font-size: 1.3rem; margin-bottom: 0.75rem; display: block; }
+
+  /* STACK */
+  .stack { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1.5rem; }
+  .stack-pill { font-family: var(--mono); font-size: 0.65rem; padding: 0.3rem 0.75rem; border: 1px solid var(--border); color: var(--text-dim); background: var(--surface); transition: border-color 0.2s, color 0.2s; }
+  .stack-pill:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* FOOTER */
+  footer { border-top: 1px solid var(--border); padding: 2rem 2.5rem; display: flex; justify-content: space-between; align-items: center; max-width: 1080px; margin: 0 auto; position: relative; z-index: 1; }
+  .footer-text { font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.08em; color: var(--text-dim); }
+  .footer-link { font-family: var(--mono); font-size: 0.62rem; color: var(--accent); text-decoration: none; }
+  .footer-link:hover { opacity: 0.7; }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
+  .reveal { opacity: 0; transform: translateY(14px); transition: opacity 0.6s, transform 0.6s; }
+  .reveal.visible { opacity: 1; transform: none; }
+
+  @media (max-width: 900px) {
+    nav { padding: 1rem 1.25rem; }
+    .nav-links { display: none; }
+    .hero { padding: 80px 1.25rem 4rem; }
+    main { padding: 0 1.25rem 5rem; }
+    .two-col, .three-col, .fn-grid, .conclusion-grid { grid-template-columns: 1fr; }
+    .stat-band { grid-template-columns: repeat(2, 1fr); }
+    .flow-row { grid-template-columns: 1fr; gap: 0.4rem; }
+    footer { flex-direction: column; gap: 0.75rem; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <span class="nav-brand">Portfolio</span>
+  <ul class="nav-links">
+    <li><a href="#overview">Overview</a></li>
+    <li><a href="#dataset">Dataset</a></li>
+    <li><a href="#method">Method</a></li>
+    <li><a href="#functions">Functions</a></li>
+    <li><a href="#forecast">Forecast</a></li>
+    <li><a href="#conclusion">Conclusion</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-tag">Linear Regression · Data Engineering · Interactive CLI</div>
+  <h1 class="hero-title">Global <span class="hl">Aquaculture</span><br>Imports & Exports</h1>
+  <p class="hero-sub">Engineering a modular analytics pipeline over 12 global fishery datasets — aggregating trade flows, building country-level statistical summaries, and forecasting 5-year revenue growth using linear regression.</p>
+  <div class="hero-chips">
+    <span class="chip accent">Python</span>
+    <span class="chip accent">Linear Regression</span>
+    <span class="chip accent">Interactive CLI</span>
+    <span class="chip">12 CSV Files</span>
+    <span class="chip">2000–2015</span>
+    <span class="chip">6 Regions</span>
+    <span class="chip">Fish Trade Data</span>
+  </div>
+</section>
+
+<main>
+
+  <!-- OVERVIEW -->
+  <section id="overview">
+    <div class="section-label reveal">01 · Overview</div>
+    <h2 class="reveal">What Was Built & Why</h2>
+
+    <div class="two-col reveal">
+      <div>
+        <h3>Project Context</h3>
+        <p>This project builds on a prior data cleaning exercise using the same Global Aquaculture Imports and Exports dataset. Where the previous project focused on cleaning and basic descriptive statistics — averages of revenue and import/export rates — this project goes further: forecasting future revenue using historical trade data and building an interactive query interface for any country in the dataset.</p>
+        <p>The dataset was provided as 12 separate CSV files, each covering a specific region and trade metric type. The first engineering challenge was consolidating these files into a unified, analysis-ready structure.</p>
+      </div>
+      <div style="background:var(--surface2)">
+        <h3>Core Output</h3>
+        <p>The final product is an interactive command-line tool. A user enters any country name and receives a complete trade profile — total imports and exports, annual averages, cumulative revenue, revenue rank relative to global average, peak/low revenue years, and a 5-year growth forecast — all generated on the fly from the underlying data.</p>
+        <div class="insight" style="margin:1rem 0 0">
+          <p>Each piece of the output is produced by a dedicated function. This modular design means the system is composable — any individual statistic can be extracted independently, and the full profile is assembled by calling all functions together.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="stat-band reveal">
+      <div class="stat-item"><span class="stat-val">12</span><span class="stat-lbl">CSV source files</span></div>
+      <div class="stat-item"><span class="stat-val">6</span><span class="stat-lbl">Global regions</span></div>
+      <div class="stat-item"><span class="stat-val">16</span><span class="stat-lbl">Years of data (2000–2015)</span></div>
+      <div class="stat-item"><span class="stat-val">5</span><span class="stat-lbl">Years forecasted (2016–2020)</span></div>
+    </div>
+  </section>
+
+  <!-- DATASET -->
+  <section id="dataset">
+    <div class="section-label reveal">02 · Dataset</div>
+    <h2 class="reveal">12 CSVs → 2 Unified DataFrames</h2>
+
+    <p class="reveal">The source data consists of 12 CSV files — one Quantity file and one Value file for each of six regions: Africa, Americas, Asia, Europe, Global, and Oceania. Each file shares a consistent column structure: Land Area (country), Trade Flow (import/export), Commodity (fish/crustaceans), and year columns from 2000 to 2015.</p>
+
+    <div class="two-col reveal">
+      <div>
+        <h3>Quantity Files (×6)</h3>
+        <p style="font-size:0.87rem">Record how much fish was traded (volume units) per country per year, split by import and export. Combined into a single <code style="font-family:var(--mono);font-size:0.82em;background:var(--surface2);padding:0.1rem 0.4rem;border:1px solid var(--border)">Q_data</code> DataFrame covering all regions.</p>
+      </div>
+      <div style="background:var(--surface2)">
+        <h3>Value Files (×6)</h3>
+        <p style="font-size:0.87rem">Record the monetary value of traded fish (USD) per country per year. Combined into a single <code style="font-family:var(--mono);font-size:0.82em;background:var(--surface2);padding:0.1rem 0.4rem;border:1px solid var(--border)">V_data</code> DataFrame. This is the primary input for revenue analysis and forecasting.</p>
+      </div>
+    </div>
+
+    <div style="margin-top:2.5rem" class="reveal">
+      <h3>Data Processing Pipeline — <code style="font-family:var(--mono);font-size:0.85em">process_data()</code></h3>
+      <p>A single reusable function handles the consolidation and cleaning of all six regional files into one unified DataFrame. The same function is called twice — once for Quantity files, once for Value files.</p>
+
+      <div class="flow">
+        <div class="flow-row">
+          <div class="flow-stage">Step 1 · Merge</div>
+          <p><code style="font-family:var(--mono);font-size:0.82em">pd.concat()</code> combines all six regional DataFrames along rows into a single merged DataFrame, resetting the index. This produces one comprehensive table covering all countries across all regions.</p>
+        </div>
+        <div class="flow-row">
+          <div class="flow-stage">Step 2 · Drop Columns</div>
+          <p>Columns beginning with capital 'S' are removed — these are source/flag columns that are not needed for analysis and would add noise to the dataset.</p>
+        </div>
+        <div class="flow-row">
+          <div class="flow-stage">Step 3 · Rename</div>
+          <p>The 'Land Area' column is renamed to 'Country' for readability and consistent referencing throughout the analysis functions.</p>
+        </div>
+        <div class="flow-row">
+          <div class="flow-stage">Step 4 · Filter Commodity</div>
+          <p>Rows where Commodity = 'Crustaceans' are removed. The analysis focuses exclusively on fish trade — keeping crustaceans would mix two fundamentally different commodity categories and distort aggregated totals.</p>
+        </div>
+        <div class="flow-row">
+          <div class="flow-stage">Step 5 · Remove Zeros</div>
+          <p>Rows where any year column (those starting with '2') contains a zero value are dropped. Zero entries represent missing or unreported data rather than genuine zero-trade years, and would distort averages and totals.</p>
+        </div>
+        <div class="flow-row">
+          <div class="flow-stage">Step 6 · Type Cast</div>
+          <p>All year columns are explicitly converted to integer type. This ensures consistent numeric behavior for summation, averaging, and regression calculations downstream.</p>
+        </div>
+      </div>
+
+      <div class="code-block" style="margin-top:1.5rem">
+        <pre><span class="kw">def</span> <span class="fn">process_data</span>(csv_files):
+    merged_df = pd.<span class="fn">concat</span>(csv_files, ignore_index=<span class="kw">True</span>)
+    merged_df = merged_df.loc[:, ~merged_df.columns.str.<span class="fn">startswith</span>(<span class="str">'S'</span>)]
+    merged_df = merged_df.<span class="fn">rename</span>(columns={<span class="str">'Land Area'</span>: <span class="str">'Country'</span>})
+    merged_df = merged_df[merged_df[<span class="str">'Commodity'</span>] != <span class="str">'Crustaceans'</span>]
+    relevant_cols = [col <span class="kw">for</span> col <span class="kw">in</span> merged_df.columns <span class="kw">if</span> col.<span class="fn">startswith</span>(<span class="str">'2'</span>)]
+    merged_df = merged_df[(merged_df[relevant_cols] != <span class="num">0</span>).<span class="fn">all</span>(axis=<span class="num">1</span>)]
+    <span class="kw">for</span> col <span class="kw">in</span> relevant_cols:
+        merged_df[col] = merged_df[col].<span class="fn">astype</span>(<span class="fn">int</span>)
+    <span class="kw">return</span> merged_df
+
+Q_data = <span class="fn">process_data</span>(csv_files_Q)  <span class="cm"># All quantity files → one DataFrame</span>
+V_data = <span class="fn">process_data</span>(csv_files_V)  <span class="cm"># All value files → one DataFrame</span></pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- METHOD -->
+  <section id="method">
+    <div class="section-label reveal">03 · Analytical Architecture</div>
+    <h2 class="reveal">Modular Function Design</h2>
+
+    <p class="reveal">Rather than writing a single monolithic script, the analysis was structured as a library of focused, reusable functions. Each function accepts a country name and the relevant DataFrame as inputs, performs one specific calculation, and returns a formatted string. This makes the system composable — the full country profile is built by calling each function in sequence.</p>
+
+    <div class="insight reveal">
+      <p>This design pattern mirrors real-world data product architecture: isolating logic into single-responsibility functions makes the code testable, readable, and extensible. Adding a new statistic means adding one new function, not rewriting existing code.</p>
+    </div>
+  </section>
+
+  <!-- FUNCTIONS -->
+  <section id="functions">
+    <div class="section-label reveal">04 · Functions</div>
+    <h2 class="reveal">Eight Core Functions</h2>
+
+    <div class="fn-grid reveal">
+      <div class="fn-card">
+        <div class="fn-name">import_sum()</div>
+        <div class="fn-sig">country, Q_data → str</div>
+        <div class="fn-desc">Filters Q_data to rows where Country matches and Trade Flow = 'Import'. Sums all values across the 16 year columns. Returns a comma-formatted integer string of total fish imported 2000–2015.</div>
+      </div>
+      <div class="fn-card">
+        <div class="fn-name">export_sum()</div>
+        <div class="fn-sig">country, Q_data → str</div>
+        <div class="fn-desc">Same logic as import_sum() but filters for Trade Flow = 'Export'. Returns total fish exported across all years as a formatted string.</div>
+      </div>
+      <div class="fn-card">
+        <div class="fn-name">import_avg()</div>
+        <div class="fn-sig">country, Q_data → str</div>
+        <div class="fn-desc">Calculates total import quantity then divides by 15 (the number of years in the dataset) to produce an average annual import figure. Returns as a comma-formatted string.</div>
+      </div>
+      <div class="fn-card">
+        <div class="fn-name">export_avg()</div>
+        <div class="fn-sig">country, Q_data → str</div>
+        <div class="fn-desc">Mirrors import_avg() for export trade flow. Divides total export quantity by 15 to produce the average annual export volume.</div>
+      </div>
+      <div class="fn-card">
+        <div class="fn-name">value_sum()</div>
+        <div class="fn-sig">country, V_data → str</div>
+        <div class="fn-desc">Sums all monetary values in V_data for a given country across all year columns — both imports and exports combined. Returns the total USD trade value over the full 15-year period.</div>
+      </div>
+      <div class="fn-card">
+        <div class="fn-name">money_rank()</div>
+        <div class="fn-sig">country, V_data, V_average → str</div>
+        <div class="fn-desc">Compares the country's total value against a pre-computed global average (V_average). Returns one of three strings: "more than", "less than", or "about" — providing a relative position in the global trade value distribution.</div>
+      </div>
+      <div class="fn-card">
+        <div class="fn-name">lowest_year()</div>
+        <div class="fn-sig">country, V_data → str</div>
+        <div class="fn-desc">Iterates through all year columns to find the one with the minimum trade value for the given country. Returns the year column name (e.g. '2003') — the country's lowest revenue year.</div>
+      </div>
+      <div class="fn-card">
+        <div class="fn-name">highest_year()</div>
+        <div class="fn-sig">country, V_data → str</div>
+        <div class="fn-desc">Mirrors lowest_year() to identify the peak revenue year for a given country across the 2000–2015 window.</div>
+      </div>
+      <div class="fn-card">
+        <div class="fn-name">forecast_growth()</div>
+        <div class="fn-sig">country, V_data → int</div>
+        <div class="fn-desc">Fits a linear regression to the country's 16-year revenue series. Projects revenue for the next 5 years (indices 16–20) and returns their sum as a formatted integer — the expected total growth over the forecast window.</div>
+      </div>
+    </div>
+
+    <div style="margin-top:3rem" class="reveal">
+      <h3>Example Output Structure</h3>
+      <p>When a country is entered, all eight functions are called and their results are interpolated into a single narrative output:</p>
+
+      <div class="output-box">
+        <div class="output-label">Sample Output — Country: Canada</div>
+        <div class="output-text">
+          <span class="country">Canada</span> has imported a total of <span class="num">X,XXX,XXX</span>, and exported a total of<br>
+          <span class="num">X,XXX,XXX</span> fish between the years 2000 and 2015. On average, <span class="country">Canada</span> imports<br>
+          <span class="num">XXX,XXX</span> fish per year while exporting about <span class="num">XXX,XXX</span>.<br>
+          All of this fish movement values at $<span class="num">X,XXX,XXX,XXX</span> over 15 years. This is<br>
+          <span class="num">more than</span> average compared to other countries in the same time span.<br>
+          <span class="num">2003</span> made the least revenue while <span class="num">2014</span> made the most.<br>
+          We can expect to see a growth of $<span class="num">X,XXX,XXX</span> over the next 5 years.
+        </div>
+      </div>
+
+      <p style="font-size:0.85rem">Each placeholder represents a live function call — the actual values are computed from the data at runtime based on whichever country the user enters. The forecast chart is also rendered inline after the text output.</p>
+    </div>
+  </section>
+
+  <!-- FORECAST -->
+  <section id="forecast">
+    <div class="section-label reveal">05 · Forecasting</div>
+    <h2 class="reveal">Linear Regression Revenue Forecast</h2>
+
+    <p class="reveal">The core machine learning technique in this project is linear regression applied to each country's revenue time series. The model is fit on 16 years of historical data (2000–2015) and projected forward 5 years to estimate trade value through 2020.</p>
+
+    <div class="steps reveal">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div>
+          <div class="step-title">Extract Historical Series</div>
+          <p>For a given country, total trade value is summed across all rows per year column — producing a 16-point time series where each point is the country's total trade value in that year.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div>
+          <div class="step-title">Fit Linear Regression</div>
+          <p><code style="font-family:var(--mono);font-size:0.85em">np.polyfit(x, y, 1)</code> fits a first-degree polynomial (straight line) to the historical data, returning slope <em>m</em> and intercept <em>b</em> for the equation y = mx + b. The x-axis uses integer indices (0–15) rather than calendar years to simplify the arithmetic.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div>
+          <div class="step-title">Project Forward 5 Years</div>
+          <p>Future indices 16 through 20 are fed into the fitted equation. The resulting five predicted values represent annual trade value estimates for 2016–2020. Their sum is the "growth forecast" displayed in the output.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div>
+          <div class="step-title">Visualize</div>
+          <p><code style="font-family:var(--mono);font-size:0.85em">visualize_growth()</code> plots the historical values as a connected line, extends it through the forecast period, and marks the 2015 boundary with a vertical dashed line — clearly distinguishing observed data from projected data.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="code-block reveal">
+      <pre><span class="kw">def</span> <span class="fn">forecast_growth</span>(country, V_data):
+    year_cols = [col <span class="kw">for</span> col <span class="kw">in</span> V_data.columns <span class="kw">if</span> col.<span class="fn">startswith</span>(<span class="str">'2'</span>)]
+    values = [V_data[V_data[<span class="str">'Country'</span>] == country][col].<span class="fn">sum</span>() <span class="kw">for</span> col <span class="kw">in</span> year_cols]
+
+    x = np.<span class="fn">arange</span>(<span class="fn">len</span>(values))          <span class="cm"># indices 0–15</span>
+    y = np.<span class="fn">array</span>(values)
+    m, b = np.<span class="fn">polyfit</span>(x, y, <span class="num">1</span>)           <span class="cm"># fit y = mx + b</span>
+
+    future_x = np.<span class="fn">arange</span>(<span class="fn">len</span>(values), <span class="fn">len</span>(values) + <span class="num">5</span>)  <span class="cm"># indices 16–20</span>
+    forecast = np.<span class="fn">sum</span>(m * future_x + b)  <span class="cm"># sum of 5 projected years</span>
+    <span class="kw">return</span> <span class="fn">round</span>(forecast)</pre>
+    </div>
+
+    <div class="insight reveal">
+      <p><strong>Why linear regression?</strong> With 16 years of data and a clear upward trend evident across most countries, a simple linear model is the appropriate first approach. It is interpretable, fast to compute per-country, and sufficient to capture the dominant growth signal. More complex models — time series (ARIMA/SARIMA) or polynomial regression — could better capture non-linear trends and seasonality, but are outside the scope of this exploratory project.</p>
+    </div>
+  </section>
+
+  <!-- CONCLUSION -->
+  <section id="conclusion">
+    <div class="section-label reveal">06 · Conclusion</div>
+    <h2 class="reveal">What This Project Demonstrates</h2>
+
+    <p class="reveal">Each country in the dataset shows linear growth in trade revenue over the 2000–2015 window — though the variance in that growth differs significantly by country. The interactive interface makes the analysis accessible: instead of reading a static table, a user gets a narrative summary tailored to their country of interest, with a visual forecast appended.</p>
+
+    <div class="conclusion-grid reveal">
+      <div class="conclusion-card">
+        <span class="conclusion-icon">🏗️</span>
+        <h3>Data Engineering</h3>
+        <p style="font-size:0.87rem">Consolidating 12 heterogeneous CSV files into two clean, unified DataFrames through a single reusable pipeline function. This pattern — abstract the cleaning logic, apply it to multiple inputs — is fundamental to scalable data workflows.</p>
+      </div>
+      <div class="conclusion-card">
+        <span class="conclusion-icon">🔧</span>
+        <h3>Modular Function Architecture</h3>
+        <p style="font-size:0.87rem">Eight dedicated functions each handle one statistic. The full output is assembled by composing them — making the codebase easy to extend, debug, and reuse. Adding a new metric means adding one function, not modifying existing logic.</p>
+      </div>
+      <div class="conclusion-card">
+        <span class="conclusion-icon">📈</span>
+        <h3>Applied Linear Regression</h3>
+        <p style="font-size:0.87rem">Fitting a regression model per country on time-indexed revenue data to generate forward-looking estimates. Demonstrates how even a simple model adds practical value — converting historical data into an actionable forecast.</p>
+      </div>
+      <div class="conclusion-card">
+        <span class="conclusion-icon">💻</span>
+        <h3>Interactive CLI Design</h3>
+        <p style="font-size:0.87rem">The while-loop input system handles valid entries, invalid entries, random country selection, and graceful exit. Building user-facing interfaces on top of analytical pipelines is a transferable pattern for any data product.</p>
+      </div>
+    </div>
+
+    <div style="margin-top:2.5rem" class="reveal">
+      <h3>Future Directions</h3>
+      <div class="card">
+        <p style="font-size:0.9rem">Linear regression assumes a constant rate of change. Future analyses could apply time series models (ARIMA, SARIMA) to capture seasonality and autocorrelation, or polynomial regression to model non-linear growth trajectories. Country-specific analysis at finer granularity could also yield more targeted forecasts for high-trade nations.</p>
+      </div>
+    </div>
+
+    <div style="margin-top:2rem" class="reveal">
+      <h3 style="font-family:var(--mono);font-size:0.62rem;letter-spacing:0.12em;text-transform:uppercase;font-weight:400;color:var(--text-dim)">Tech Stack</h3>
+      <div class="stack">
+        <span class="stack-pill">Python</span>
+        <span class="stack-pill">pandas</span>
+        <span class="stack-pill">numpy</span>
+        <span class="stack-pill">matplotlib</span>
+        <span class="stack-pill">np.polyfit (linear regression)</span>
+        <span class="stack-pill">CSV I/O</span>
+        <span class="stack-pill">CLI (input loop)</span>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <span class="footer-text">Global Aquaculture Trade Analysis · Portfolio</span>
+  <a class="footer-link" href="#overview">↑ Back to top</a>
+</footer>
+
+<script>
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add("visible"); });
+  }, { threshold: 0.07, rootMargin: "0px 0px -30px 0px" });
+  document.querySelectorAll(".reveal").forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
