@@ -1,0 +1,1624 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CompTIA Data+ Study Guide</title>
+<style>
+  :root {
+    --primary: #1a2e4a;
+    --accent: #2563eb;
+    --accent-light: #dbeafe;
+    --accent-mid: #93c5fd;
+    --success: #15803d;
+    --success-light: #dcfce7;
+    --warning: #b45309;
+    --warning-light: #fef3c7;
+    --danger: #b91c1c;
+    --danger-light: #fee2e2;
+    --purple: #6d28d9;
+    --purple-light: #ede9fe;
+    --teal: #0f766e;
+    --teal-light: #ccfbf1;
+    --gray-50: #f8fafc;
+    --gray-100: #f1f5f9;
+    --gray-200: #e2e8f0;
+    --gray-300: #cbd5e1;
+    --gray-400: #94a3b8;
+    --gray-600: #475569;
+    --gray-700: #334155;
+    --gray-800: #1e293b;
+    --gray-900: #0f172a;
+    --text: #1e293b;
+    --text-muted: #64748b;
+    --border: #e2e8f0;
+    --bg: #ffffff;
+    --surface: #f8fafc;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Georgia', 'Times New Roman', serif;
+    color: var(--text);
+    background: var(--bg);
+    line-height: 1.7;
+    font-size: 15px;
+  }
+
+  .cover {
+    background: var(--primary);
+    color: white;
+    padding: 60px 48px;
+    position: relative;
+    overflow: hidden;
+  }
+  .cover::before {
+    content: '';
+    position: absolute;
+    top: -80px; right: -80px;
+    width: 320px; height: 320px;
+    border-radius: 50%;
+    background: rgba(37,99,235,0.18);
+  }
+  .cover::after {
+    content: '';
+    position: absolute;
+    bottom: -60px; left: 60px;
+    width: 200px; height: 200px;
+    border-radius: 50%;
+    background: rgba(37,99,235,0.10);
+  }
+  .cover-badge {
+    display: inline-block;
+    background: rgba(37,99,235,0.35);
+    color: #93c5fd;
+    font-family: 'Courier New', monospace;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 5px 14px;
+    border-radius: 4px;
+    margin-bottom: 20px;
+  }
+  .cover h1 {
+    font-family: Georgia, serif;
+    font-size: 42px;
+    font-weight: 700;
+    line-height: 1.15;
+    margin-bottom: 12px;
+    position: relative;
+  }
+  .cover .subtitle {
+    font-size: 17px;
+    opacity: 0.72;
+    margin-bottom: 36px;
+    font-style: italic;
+  }
+  .cover-stats {
+    display: flex;
+    gap: 36px;
+    position: relative;
+  }
+  .cover-stat {
+    text-align: center;
+  }
+  .cover-stat .num {
+    font-size: 32px;
+    font-weight: 700;
+    color: #93c5fd;
+    display: block;
+    font-family: 'Courier New', monospace;
+  }
+  .cover-stat .lbl {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    opacity: 0.65;
+  }
+
+  .toc-section {
+    padding: 36px 48px 20px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+  }
+  .toc-title {
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 16px;
+    font-family: 'Courier New', monospace;
+  }
+  .toc-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 8px;
+  }
+  .toc-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: white;
+    text-decoration: none;
+    color: var(--text);
+    font-size: 13px;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .toc-item:hover { border-color: var(--accent-mid); background: var(--accent-light); }
+  .toc-num {
+    font-family: 'Courier New', monospace;
+    font-size: 10px;
+    color: var(--accent);
+    background: var(--accent-light);
+    padding: 2px 6px;
+    border-radius: 3px;
+    white-space: nowrap;
+    font-weight: 700;
+  }
+
+  .missed-section {
+    padding: 28px 48px 16px;
+    background: #fff7ed;
+    border-bottom: 2px solid #fed7aa;
+  }
+  .missed-title {
+    font-size: 12px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--warning);
+    margin-bottom: 12px;
+    font-family: 'Courier New', monospace;
+  }
+  .missed-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 8px;
+  }
+  .missed-pill {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 7px 12px;
+    border-radius: 6px;
+    background: white;
+    border: 1px solid #fed7aa;
+    font-size: 12.5px;
+  }
+  .missed-count {
+    font-family: 'Courier New', monospace;
+    font-weight: 700;
+    color: var(--danger);
+    background: var(--danger-light);
+    padding: 2px 7px;
+    border-radius: 3px;
+    font-size: 11px;
+  }
+
+  main { max-width: 900px; margin: 0 auto; }
+
+  .section {
+    padding: 40px 48px;
+    border-bottom: 1px solid var(--border);
+  }
+  .section:last-child { border-bottom: none; }
+
+  .section-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 28px;
+    padding-bottom: 18px;
+    border-bottom: 2px solid var(--border);
+  }
+  .section-num {
+    font-family: 'Courier New', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    color: white;
+    background: var(--accent);
+    padding: 4px 10px;
+    border-radius: 4px;
+    white-space: nowrap;
+    margin-top: 4px;
+  }
+  .section-header-text h2 {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--primary);
+    margin-bottom: 4px;
+    font-family: Georgia, serif;
+  }
+  .section-header-text p {
+    font-size: 13px;
+    color: var(--text-muted);
+    font-style: italic;
+    font-family: Georgia, serif;
+  }
+
+  h3 {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--primary);
+    margin: 24px 0 10px;
+    font-family: 'Courier New', monospace;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    font-size: 12px;
+  }
+
+  p { margin-bottom: 12px; }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin: 14px 0;
+  }
+  .card-title {
+    font-weight: 700;
+    font-size: 13.5px;
+    color: var(--primary);
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: Georgia, serif;
+  }
+  .card-tag {
+    font-family: 'Courier New', monospace;
+    font-size: 10px;
+    padding: 2px 7px;
+    border-radius: 3px;
+    font-weight: 700;
+  }
+  .tag-blue { background: var(--accent-light); color: var(--accent); }
+  .tag-green { background: var(--success-light); color: var(--success); }
+  .tag-orange { background: var(--warning-light); color: var(--warning); }
+  .tag-red { background: var(--danger-light); color: var(--danger); }
+  .tag-purple { background: var(--purple-light); color: var(--purple); }
+  .tag-teal { background: var(--teal-light); color: var(--teal); }
+
+  .callout {
+    padding: 14px 18px;
+    border-radius: 6px;
+    margin: 14px 0;
+    font-size: 14px;
+    border-left: 3px solid;
+  }
+  .callout-key {
+    background: #eff6ff;
+    border-color: var(--accent);
+    color: var(--primary);
+  }
+  .callout-key strong { color: var(--accent); }
+  .callout-warn {
+    background: var(--warning-light);
+    border-color: var(--warning);
+    color: #7c2d12;
+  }
+  .callout-success {
+    background: var(--success-light);
+    border-color: var(--success);
+    color: #14532d;
+  }
+  .callout-exam {
+    background: var(--purple-light);
+    border-color: var(--purple);
+    color: #3b0764;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13.5px;
+    margin: 14px 0;
+  }
+  thead tr { background: var(--primary); color: white; }
+  thead th { padding: 9px 14px; text-align: left; font-weight: 600; font-size: 12px; letter-spacing: 0.5px; }
+  tbody tr:nth-child(even) { background: var(--surface); }
+  tbody td { padding: 8px 14px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  tbody tr:hover { background: var(--accent-light); }
+
+  .compare-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin: 14px 0;
+  }
+  .compare-grid.three { grid-template-columns: 1fr 1fr 1fr; }
+  .compare-grid.four { grid-template-columns: 1fr 1fr 1fr 1fr; }
+  .compare-card {
+    border-radius: 7px;
+    padding: 14px 16px;
+    border: 1px solid var(--border);
+    font-size: 13px;
+  }
+  .compare-card .cc-title {
+    font-weight: 700;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 6px;
+    font-family: 'Courier New', monospace;
+  }
+  .cc-blue { background: #eff6ff; border-color: #bfdbfe; }
+  .cc-blue .cc-title { color: var(--accent); }
+  .cc-green { background: var(--success-light); border-color: #bbf7d0; }
+  .cc-green .cc-title { color: var(--success); }
+  .cc-purple { background: var(--purple-light); border-color: #ddd6fe; }
+  .cc-purple .cc-title { color: var(--purple); }
+  .cc-orange { background: var(--warning-light); border-color: #fde68a; }
+  .cc-orange .cc-title { color: var(--warning); }
+  .cc-teal { background: var(--teal-light); border-color: #99f6e4; }
+  .cc-teal .cc-title { color: var(--teal); }
+  .cc-red { background: var(--danger-light); border-color: #fecaca; }
+  .cc-red .cc-title { color: var(--danger); }
+  .cc-gray { background: var(--surface); border-color: var(--border); }
+  .cc-gray .cc-title { color: var(--gray-600); }
+
+  ul, ol { padding-left: 20px; margin-bottom: 12px; }
+  li { margin-bottom: 5px; font-size: 14px; }
+  li strong { color: var(--primary); }
+
+  .exam-note {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: var(--purple-light);
+    color: var(--purple);
+    font-size: 11px;
+    font-family: 'Courier New', monospace;
+    padding: 3px 8px;
+    border-radius: 3px;
+    margin-right: 6px;
+    font-weight: 700;
+  }
+
+  .anchor { display: block; padding-top: 20px; margin-top: -20px; }
+
+  .divider {
+    height: 1px;
+    background: linear-gradient(to right, var(--accent-light), transparent);
+    margin: 20px 0;
+  }
+
+  code {
+    font-family: 'Courier New', monospace;
+    background: var(--gray-100);
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-size: 12.5px;
+    color: var(--danger);
+    border: 1px solid var(--gray-200);
+  }
+
+  .keyword-box {
+    background: var(--primary);
+    color: #93c5fd;
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    padding: 12px 16px;
+    border-radius: 6px;
+    margin: 12px 0;
+    line-height: 1.9;
+  }
+  .keyword-box span { color: white; }
+
+  footer {
+    background: var(--primary);
+    color: rgba(255,255,255,0.55);
+    text-align: center;
+    padding: 24px;
+    font-size: 12px;
+    font-family: 'Courier New', monospace;
+    letter-spacing: 0.5px;
+  }
+</style>
+</head>
+<body>
+
+<!-- COVER -->
+<div class="cover">
+  <div class="cover-badge">CompTIA Data+ Exam Prep</div>
+  <h1>Complete Study Guide</h1>
+  <p class="subtitle">Compiled from Exams 1–6 · All Missed Topics · Objective-by-Objective Review</p>
+  <div class="cover-stats">
+    <div class="cover-stat"><span class="num">6</span><span class="lbl">Exams</span></div>
+    <div class="cover-stat"><span class="num">110+</span><span class="lbl">Questions</span></div>
+    <div class="cover-stat"><span class="num">12</span><span class="lbl">Objectives</span></div>
+    <div class="cover-stat"><span class="num">30+</span><span class="lbl">Topics</span></div>
+  </div>
+</div>
+
+<!-- TOC -->
+<div class="toc-section">
+  <div class="toc-title">Objectives Covered</div>
+  <div class="toc-grid">
+    <a href="#obj11" class="toc-item"><span class="toc-num">1.1</span> Data Concepts</a>
+    <a href="#obj12" class="toc-item"><span class="toc-num">1.2</span> Types of Data Sources</a>
+    <a href="#obj13" class="toc-item"><span class="toc-num">1.3</span> Infrastructure Concepts</a>
+    <a href="#obj15" class="toc-item"><span class="toc-num">1.5</span> AI Concepts</a>
+    <a href="#obj21" class="toc-item"><span class="toc-num">2.1</span> Data Acquisition Methods</a>
+    <a href="#obj22" class="toc-item"><span class="toc-num">2.2</span> Data Exploration &amp; Inconsistencies</a>
+    <a href="#obj23" class="toc-item"><span class="toc-num">2.3</span> Data Transformation &amp; Cleansing</a>
+    <a href="#obj31" class="toc-item"><span class="toc-num">3.1</span> Communication Approaches</a>
+    <a href="#obj32" class="toc-item"><span class="toc-num">3.2</span> Statistical Methods &amp; Functions</a>
+    <a href="#obj33" class="toc-item"><span class="toc-num">3.3</span> Troubleshooting Tools &amp; Methods</a>
+    <a href="#obj41" class="toc-item"><span class="toc-num">4.1</span> Visual Elements</a>
+    <a href="#obj42" class="toc-item"><span class="toc-num">4.2</span> Delivery &amp; Consumption Methods</a>
+    <a href="#obj53" class="toc-item"><span class="toc-num">5.3</span> Data Privacy &amp; Protection</a>
+  </div>
+</div>
+
+<!-- MISSED TOPICS SUMMARY -->
+<div class="missed-section">
+  <div class="missed-title">&#x26A0; High-Miss Topics Across All 6 Exams — Study These First</div>
+  <div class="missed-grid">
+    <div class="missed-pill">SQL Data Types <span class="missed-count">7 misses</span></div>
+    <div class="missed-pill">Analytics Types (Desc/Prescr) <span class="missed-count">6 misses</span></div>
+    <div class="missed-pill">Storage Types <span class="missed-count">5 misses</span></div>
+    <div class="missed-pill">Data Structures &amp; File Formats <span class="missed-count">5 misses</span></div>
+    <div class="missed-pill">API Types <span class="missed-count">4 misses</span></div>
+    <div class="missed-pill">Database Types <span class="missed-count">4 misses</span></div>
+    <div class="missed-pill">Data Privacy &amp; Ethics <span class="missed-count">4 misses</span></div>
+    <div class="missed-pill">Reports &amp; Delivery <span class="missed-count">4 misses</span></div>
+    <div class="missed-pill">Normalization / Schema Design <span class="missed-count">3 misses</span></div>
+    <div class="missed-pill">Data Quality <span class="missed-count">3 misses</span></div>
+    <div class="missed-pill">Visualization &amp; Design <span class="missed-count">3 misses</span></div>
+    <div class="missed-pill">Audience Communication <span class="missed-count">3 misses</span></div>
+  </div>
+</div>
+
+<main>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- OBJECTIVE 1.1 -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="section" id="obj11">
+  <span class="anchor" id="obj11"></span>
+  <div class="section-header">
+    <div class="section-num">1.1</div>
+    <div class="section-header-text">
+      <h2>Explain Data Concepts</h2>
+      <p>Data types, structures, transformations, schemas, and core database vocabulary</p>
+    </div>
+  </div>
+
+  <h3>SQL Data Types — Most Missed Topic (7 misses across exams)</h3>
+
+  <table>
+    <thead>
+      <tr><th>Data Type</th><th>Use Case</th><th>Key Differentiator</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>CHAR(n)</code></td><td>Fixed-length single characters (e.g., account codes "S", "C")</td><td>Always pads to n — wastes space if lengths vary</td></tr>
+      <tr><td><code>VARCHAR(n)</code></td><td>Variable-length ASCII/English text (addresses, names)</td><td>Only uses storage proportional to actual string</td></tr>
+      <tr><td><code>NVARCHAR(n)</code></td><td>Multi-language text: Chinese, Arabic, Russian, Japanese, Greek</td><td><strong>N = Unicode/National.</strong> Use whenever non-English characters exist</td></tr>
+      <tr><td><code>CLOB</code></td><td>Very large text documents (scientific papers, articles)</td><td>Gigabytes of text; beyond VARCHAR limits</td></tr>
+      <tr><td><code>BLOB</code></td><td>Binary files: images, video, audio, executables</td><td>Binary Large Object — raw bytes, not text</td></tr>
+      <tr><td><code>INT / INTEGER</code></td><td>Whole numbers only; no text, no decimals</td><td>Sequential; predictable (security risk for IDs)</td></tr>
+      <tr><td><code>FLOAT / REAL</code></td><td>Approximate decimals — scientific measurements</td><td>Introduces rounding errors — never use for money</td></tr>
+      <tr><td><code>DECIMAL / NUMERIC</code></td><td>Exact decimal values — financial/monetary data</td><td>No rounding errors; precise arithmetic</td></tr>
+      <tr><td><code>TIMESTAMP</code></td><td>Date + time + timezone; supports timezone math &amp; comparisons</td><td>Use for flight times, event scheduling, UTC queries</td></tr>
+      <tr><td><code>DATE</code></td><td>Date only (no time component)</td><td>Cannot do time zone conversions</td></tr>
+      <tr><td><code>BOOLEAN</code></td><td>True/False values only</td><td>Cannot store text grades (A/B/C) or numbers</td></tr>
+      <tr><td><code>UUID</code></td><td>Globally unique, non-sequential ID across distributed systems</td><td>128-bit; not predictable; prevents enumeration attacks</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout callout-exam">
+    <strong>Exam Pattern — The Trick Questions:</strong><br>
+    "Multi-language / Unicode" → Always <code>NVARCHAR</code>, never <code>VARCHAR</code>.<br>
+    "Financial / no rounding errors" → Always <code>DECIMAL</code>, never <code>FLOAT</code>.<br>
+    "Images, videos, binary files" → <code>BLOB</code>. "Large text documents" → <code>CLOB</code>.<br>
+    "Non-sequential unique ID across servers" → <code>UUID</code>, never <code>INT</code>.
+  </div>
+
+  <h3>Data Structures &amp; File Formats</h3>
+
+  <div class="compare-grid">
+    <div class="compare-card cc-blue">
+      <div class="cc-title">.csv</div>
+      Flat tabular — rows and columns, no nesting. No charts, no formatting. Plain text. Best for raw data exchange.
+    </div>
+    <div class="compare-card cc-green">
+      <div class="cc-title">.json</div>
+      Hierarchical, nested, human-readable. Lightweight. Standard for web APIs and config files. Supports arrays within objects.
+    </div>
+    <div class="compare-card cc-purple">
+      <div class="cc-title">.xml</div>
+      Hierarchical with nested tags. More verbose than JSON. Good for complex structured data needing strict validation (schemas).
+    </div>
+    <div class="compare-card cc-orange">
+      <div class="cc-title">.xlsx</div>
+      Excel format. Supports charts, pivot tables, conditional formatting. Not lightweight — for analytical reporting, not data interchange.
+    </div>
+    <div class="compare-card cc-teal">
+      <div class="cc-title">.dat</div>
+      Generic, unstructured, application-specific binary or text. No fixed format. Used for game saves, raw program data.
+    </div>
+    <div class="compare-card cc-gray">
+      <div class="cc-title">.log</div>
+      Sequential event records for debugging and monitoring. Text-based, time-ordered. Not for structured data storage.
+    </div>
+  </div>
+
+  <div class="callout callout-key">
+    <strong>Key Decision Rule:</strong> "Charts + pivot tables + conditional formatting" → <code>.xlsx</code>. "Human-readable + hierarchical + API interchange" → <code>.json</code>. "Raw, no fixed format, application-specific" → <code>.dat</code>. "Tabular only, no formatting" → <code>.csv</code>.
+  </div>
+
+  <h3>Data Structures (Programming / CS)</h3>
+  <table>
+    <thead>
+      <tr><th>Structure</th><th>Purpose</th><th>Lookup Speed</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>Hash Table</strong></td><td>Fastest key-based lookup — O(1) average. Uses a hash function to compute storage location directly.</td><td>O(1) — Constant</td></tr>
+      <tr><td><strong>Linked List</strong></td><td>Sequential access; each node points to next. Must traverse from the start to find a record.</td><td>O(n) — Slow</td></tr>
+      <tr><td><strong>Queue (FIFO)</strong></td><td>First-in, first-out ordering. Not for key lookups — for processing order.</td><td>O(n) for search</td></tr>
+      <tr><td><strong>Stack (LIFO)</strong></td><td>Last-in, first-out. Call stacks, undo operations. Not for key lookups.</td><td>O(n) for search</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Database Table Types (Data Warehouse)</h3>
+  <div class="compare-grid">
+    <div class="compare-card cc-blue">
+      <div class="cc-title">Fact Table</div>
+      Stores quantitative measurements and foreign keys. Sales amount, product ID, customer ID, date, store ID. The "what happened" table. Used for aggregation (totals, averages per month/store).
+    </div>
+    <div class="compare-card cc-purple">
+      <div class="cc-title">Dimension Table</div>
+      Stores descriptive context: customer name, product name, store location. The "who/what/where" table. No measurements — just attributes.
+    </div>
+    <div class="compare-card cc-teal">
+      <div class="cc-title">Bridge Table</div>
+      Resolves many-to-many relationships. Holds foreign keys from both sides (e.g., StudentID + CourseID). Also called junction or associative table.
+    </div>
+    <div class="compare-card cc-orange">
+      <div class="cc-title">Lookup Table</div>
+      Maps codes to descriptions (status codes, type codes). Static reference. NOT for many-to-many resolution and NOT for tracking historical changes.
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Slowly Changing Dimensions (SCD) <span class="card-tag tag-purple">Data Warehouse</span></div>
+    A data warehousing technique for tracking and preserving historical changes to dimensional attributes (customer address changes, membership level changes from Basic to Premium) while always providing access to the current state. SCDs are used when data evolves slowly over time and you need a history of those changes.
+  </div>
+
+  <h3>Core Data Concepts</h3>
+
+  <div class="compare-grid">
+    <div class="compare-card cc-blue">
+      <div class="cc-title">Metadata</div>
+      "Data about data." Data type, field length, description, source system for attributes like Product_ID. Describes the structure, not the actual business content.
+    </div>
+    <div class="compare-card cc-green">
+      <div class="cc-title">Master Data</div>
+      Core business entities shared across the org: customer names, product catalogs, supplier lists. The actual business content — not descriptions of fields.
+    </div>
+    <div class="compare-card cc-orange">
+      <div class="cc-title">Data Lineage</div>
+      The complete journey of data from origin through every transformation to its final destination. Used to trace how a metric was derived and to demonstrate compliance during audits.
+    </div>
+    <div class="compare-card cc-purple">
+      <div class="cc-title">Data Dictionary</div>
+      Defines fields, data types, and descriptions for a dataset. Tells you WHAT data is — not where it came from or how it was transformed.
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- OBJECTIVE 1.2 -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="section" id="obj12">
+  <span class="anchor" id="obj12"></span>
+  <div class="section-header">
+    <div class="section-num">1.2</div>
+    <div class="section-header-text">
+      <h2>Identify Types of Data Sources</h2>
+      <p>Databases, APIs, storage systems, repositories, and data access methods</p>
+    </div>
+  </div>
+
+  <h3>Database Types — Know When to Use Each</h3>
+
+  <table>
+    <thead>
+      <tr><th>Database Type</th><th>Best For</th><th>Key Signal Words</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>Relational (RDBMS)</strong></td><td>Structured data, complex joins, ACID transactions, rollback support, referential integrity</td><td>"enforce consistency," "complex joins," "transaction rollback," "primary/foreign keys"</td></tr>
+      <tr><td><strong>Graph</strong></td><td>Relationship-heavy queries: recommendation engines, social networks, fraud detection</td><td>"relationships between entities," "customers ↔ products ↔ purchases"</td></tr>
+      <tr><td><strong>Columnar</strong></td><td>Large-scale analytics on sparse data; reads only needed columns</td><td>"high-speed analytics," "sparse datasets," "semi-structured," "analytical workloads"</td></tr>
+      <tr><td><strong>Time-Series</strong></td><td>Time-stamped metrics: sensor data, stock prices, performance monitoring</td><td>"time-stamped," "metrics over time," "IoT," "telemetry"</td></tr>
+      <tr><td><strong>Document (NoSQL)</strong></td><td>Hierarchical nested data in a single record; flexible schema</td><td>"arrays within arrays," "nested," "no fixed schema," "JSON documents"</td></tr>
+      <tr><td><strong>Key-Value</strong></td><td>Simple, fast exact-match lookups; caching</td><td>"fast lookups," "caching," "simple key-to-value"</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout callout-exam">
+    <strong>Critical Distinction:</strong> Graph database = relationship traversal (recommendation engines). Relational database = structured queries + ACID + rollback. Columnar = analytics on large datasets. Time-series = time-stamped metrics. These four are frequently tested against each other.
+  </div>
+
+  <h3>Data Repositories</h3>
+
+  <div class="compare-grid">
+    <div class="compare-card cc-blue">
+      <div class="cc-title">Data Warehouse</div>
+      Consolidates data from the entire organization. Optimized for analytics and reporting. Entire org view — not department-specific.
+    </div>
+    <div class="compare-card cc-green">
+      <div class="cc-title">Data Mart</div>
+      Subject- or department-specific subset of a warehouse. Gives one team (e.g., loan officers) fast, focused access to only their data.
+    </div>
+    <div class="compare-card cc-purple">
+      <div class="cc-title">Data Lake</div>
+      Stores vast raw, unstructured data from all sources. Not curated or optimized for specific queries. Schema-on-read.
+    </div>
+    <div class="compare-card cc-orange">
+      <div class="cc-title">Operational DB (OLTP)</div>
+      Handles day-to-day transactions. Tuned for INSERT/UPDATE speed, not large analytical queries.
+    </div>
+  </div>
+
+  <h3>API Types</h3>
+
+  <table>
+    <thead>
+      <tr><th>API Type</th><th>Key Characteristic</th><th>Signal Words</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>REST</strong></td><td>Standard HTTP; returns JSON; fixed endpoint responses; simple and widely used</td><td>"external service + JSON response," "weather API," "standard request-response"</td></tr>
+      <tr><td><strong>GraphQL</strong></td><td>Client specifies exactly which fields to return; single request across multiple sources; reduces over-fetching</td><td>"specify exact fields," "reduce bandwidth," "single request from multiple sources"</td></tr>
+      <tr><td><strong>SOAP</strong></td><td>XML-based protocol; rigid schema; heavy; enterprise legacy systems</td><td>"XML," "strict schema," "enterprise," NOT JSON</td></tr>
+      <tr><td><strong>WebSocket</strong></td><td>Persistent two-way connection; real-time streaming (live chat, live feeds)</td><td>"persistent connection," "bidirectional," "streaming"</td></tr>
+      <tr><td><strong>RPC</strong></td><td>Invokes specific functions on a remote server; fixed endpoints</td><td>"remote procedure call," "invoke function"</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout callout-key">
+    <strong>REST vs GraphQL:</strong> REST returns a fixed, pre-defined JSON payload. GraphQL lets the client declare exactly which fields it needs — avoiding over-fetching. If the scenario mentions "reduce bandwidth" or "specify fields," it's GraphQL.
+  </div>
+
+  <h3>Web Scraping Methods</h3>
+  <div class="compare-grid">
+    <div class="compare-card cc-blue">
+      <div class="cc-title">Headless Browser Scraping</div>
+      Runs a full browser engine (Puppeteer, Playwright) without UI. Executes JavaScript, waits for dynamic content to load. Use when content is rendered by JavaScript after page load.
+    </div>
+    <div class="compare-card cc-orange">
+      <div class="cc-title">Static HTML Parsing</div>
+      Reads raw HTML source (BeautifulSoup). Only sees the initial page load — cannot capture JavaScript-rendered content. Fast and simple for static pages.
+    </div>
+    <div class="compare-card cc-purple">
+      <div class="cc-title">Regular Expressions</div>
+      Pattern matching for extracting text from already-retrieved content. Cannot load pages or execute JavaScript on its own.
+    </div>
+  </div>
+
+  <h3>DOM (Document Object Model)</h3>
+  <p>The DOM is the browser's in-memory, tree-like representation of an HTML document. Web scraping libraries navigate and query the DOM to locate specific HTML elements (divs, spans, tables) and extract their text content. When the question asks about extracting product prices and descriptions from an HTML page, the answer is DOM — not JSON, not XML.</p>
+
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- OBJECTIVE 1.3 -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="section" id="obj13">
+  <span class="anchor" id="obj13"></span>
+  <div class="section-header">
+    <div class="section-num">1.3</div>
+    <div class="section-header-text">
+      <h2>Identify Infrastructure Concepts</h2>
+      <p>Storage types, cloud models, deployment options, containerization</p>
+    </div>
+  </div>
+
+  <h3>Storage Types — 4 Misses on Practice Exams</h3>
+
+  <table>
+    <thead>
+      <tr><th>Storage Type</th><th>Use Case</th><th>Key Signal Words</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>Block Storage</strong></td><td>Dedicated VM volumes; databases needing low-latency OS-level access. Data split into fixed-size blocks.</td><td>"dedicated volume," "VM storage," "fixed-size blocks," "expand/move between servers," "low latency"</td></tr>
+      <tr><td><strong>File Storage (NAS)</strong></td><td>Multiple users sharing files over local network. Office-style shared drives.</td><td>"multiple users on local network," "shared files," "workstations access same files"</td></tr>
+      <tr><td><strong>Object Storage</strong></td><td>Large unstructured files (media, backups) accessed via API. Massive scalability. Metadata tagging.</td><td>"metadata tagging," "no traditional file system," "multi-location access," "S3," "massive scale"</td></tr>
+      <tr><td><strong>S3 Glacier (AWS)</strong></td><td>Long-term archival; infrequently accessed backup data. Very low cost, high durability, slow retrieval.</td><td>"archive," "backup," "rarely accessed," "low cost," "high durability"</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout callout-exam">
+    <strong>The Block vs NAS Trick:</strong> Block storage = raw OS-level volume for one VM or database. NAS = file-level shared access for multiple office users over LAN. An SSD is a physical hardware component, not a storage architecture — never pick SSD as the answer for a cloud or network storage question.
+  </div>
+
+  <h3>Cloud Service Models</h3>
+
+  <div class="compare-grid three">
+    <div class="compare-card cc-blue">
+      <div class="cc-title">IaaS</div>
+      Infrastructure as a Service. Raw compute, storage, networking. Customer still manages OS, runtime, scaling. Most control, most responsibility.
+    </div>
+    <div class="compare-card cc-green">
+      <div class="cc-title">PaaS</div>
+      Platform as a Service. Provider manages servers, networking, scaling, patching. Developer just deploys app. "Deploy app, don't manage infrastructure."
+    </div>
+    <div class="compare-card cc-purple">
+      <div class="cc-title">SaaS</div>
+      Software as a Service. Fully finished applications (email, CRM). End users, not developers. No deployment, no app building.
+    </div>
+  </div>
+
+  <h3>Infrastructure Deployment Models</h3>
+
+  <div class="compare-grid four">
+    <div class="compare-card cc-teal">
+      <div class="cc-title">Public Cloud</div>
+      Minimal upfront cost. Provider manages everything. Scales instantly. Best for startups.
+    </div>
+    <div class="compare-card cc-blue">
+      <div class="cc-title">Private Cloud</div>
+      Dedicated to one org. Higher cost. More control and security.
+    </div>
+    <div class="compare-card cc-purple">
+      <div class="cc-title">Hybrid Cloud</div>
+      Combines public + private. Complex. Used when some data must stay on-prem.
+    </div>
+    <div class="compare-card cc-gray">
+      <div class="cc-title">On-Premises</div>
+      Company owns and manages all hardware. Highest capital expense. Maximum control.
+    </div>
+  </div>
+
+  <h3>Containerization</h3>
+  <p>Containers package an application together with all its dependencies, libraries, and configuration so it runs identically across development, testing, and production environments. The defining benefit: "run the same way everywhere." Containers are lighter than VMs (which run a full OS). Serverless runs code on demand but does not package dependencies for consistent deployment.</p>
+
+  <h3>SQL Objects</h3>
+  <div class="compare-grid">
+    <div class="compare-card cc-blue">
+      <div class="cc-title">View</div>
+      A saved query (not stored results). Re-executes underlying SQL each time it's called. Persists permanently across sessions.
+    </div>
+    <div class="compare-card cc-green">
+      <div class="cc-title">Temporary Table</div>
+      Stores a result set that exists only for the current session, then is automatically dropped. "Exists only during the session."
+    </div>
+    <div class="compare-card cc-purple">
+      <div class="cc-title">Materialized View</div>
+      Stores query results physically. Persists across sessions (unlike temp tables). Must be manually refreshed. Faster than views for repeated queries.
+    </div>
+    <div class="compare-card cc-orange">
+      <div class="cc-title">Index</div>
+      Speeds up data retrieval on a specific column by allowing the database to find rows without a full table scan. Does not store result sets.
+    </div>
+  </div>
+
+  <div class="callout callout-key">
+    <strong>Slow query on a column?</strong> Always create an index on that column. This works for any frequently filtered or searched column (CustomerID, OrderDate, etc.).
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- OBJECTIVE 1.5 -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="section" id="obj15">
+  <span class="anchor" id="obj15"></span>
+  <div class="section-header">
+    <div class="section-num">1.5</div>
+    <div class="section-header-text">
+      <h2>Identify Artificial Intelligence (AI) Concepts</h2>
+      <p>ML types, bias/fairness, model evaluation, and AI ethics</p>
+    </div>
+  </div>
+
+  <h3>AI Fairness and Bias (Tested in Data Ethics Questions)</h3>
+  <div class="card">
+    <div class="card-title">Fairness <span class="card-tag tag-red">High Priority</span></div>
+    When an AI model consistently favors one demographic group over another — even with no intentional discrimination — it raises a <strong>fairness</strong> concern. A model can be "accurate" in aggregate yet still be unfair to specific groups. Fairness is about equitable treatment across groups, not about overall accuracy statistics.
+    <br><br>
+    The root cause is often biased training data or biased feature selection, not malicious intent.
+  </div>
+
+  <div class="card">
+    <div class="card-title">Transparency <span class="card-tag tag-purple">Ethics</span></div>
+    When an organization uses customer data in ways that customers were not informed about or did not consent to — such as inferring health conditions from purchase history without disclosing this — it violates the principle of <strong>transparency</strong>. Users must be informed about how their data is collected and used.
+  </div>
+
+  <h3>Key AI Ethics Principles</h3>
+  <table>
+    <thead>
+      <tr><th>Principle</th><th>Definition</th><th>Example Violation</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>Fairness</strong></td><td>Model treats all groups equitably; no systematic bias</td><td>AI hiring tool consistently rejects one demographic group</td></tr>
+      <tr><td><strong>Transparency</strong></td><td>Organization is open about data collection and use</td><td>Using purchase history to infer health data without disclosure</td></tr>
+      <tr><td><strong>Accountability</strong></td><td>Clear responsibility for model decisions and outcomes</td><td>No process for users to contest automated decisions</td></tr>
+      <tr><td><strong>Privacy</strong></td><td>Protecting personal data from misuse or unauthorized access</td><td>Sharing health data without anonymization</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout callout-warn">
+    <strong>Common Confusion:</strong> If a model has biased outcomes, the answer is almost always "fairness" — not "accuracy." Accuracy measures how often the model is correct overall; fairness measures whether it's equitable across groups. You can have high accuracy and poor fairness simultaneously.
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- OBJECTIVE 2.1 -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="section" id="obj21">
+  <span class="anchor" id="obj21"></span>
+  <div class="section-header">
+    <div class="section-num">2.1</div>
+    <div class="section-header-text">
+      <h2>Data Acquisition Methods</h2>
+      <p>How to collect data — surveys, APIs, sampling strategies, integration</p>
+    </div>
+  </div>
+
+  <h3>Qualitative vs Quantitative Data Collection</h3>
+  <div class="compare-grid">
+    <div class="compare-card cc-blue">
+      <div class="cc-title">Open-Ended Surveys</div>
+      Collects direct qualitative feedback from users in their own words. Use when you need opinions, sentiment, and subjective experiences. The correct choice for "qualitative insights directly from users."
+    </div>
+    <div class="compare-card cc-gray">
+      <div class="cc-title">Application Logs</div>
+      Capture system events, errors, and technical records. Not for gathering human opinions. Qualitative feedback cannot come from logs.
+    </div>
+    <div class="compare-card cc-green">
+      <div class="cc-title">API Data Pulls</div>
+      Programmatic retrieval of structured data from external systems. Integration method — not for collecting user opinions.
+    </div>
+    <div class="compare-card cc-orange">
+      <div class="cc-title">IoT Sensor Data</div>
+      Physical/environmental measurements (temperature, motion, location). Cannot capture subjective human feedback.
+    </div>
+  </div>
+
+  <h3>Sampling Methods</h3>
+  <table>
+    <thead>
+      <tr><th>Sampling Method</th><th>How It Works</th><th>Key Signal</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>Cluster Sampling</strong></td><td>Randomly select entire groups (clusters), then study all members within those groups</td><td>"Three randomly chosen departments" — whole groups are selected, not individuals from every group</td></tr>
+      <tr><td><strong>Stratified Sampling</strong></td><td>Divide population into subgroups (strata), then sample some individuals from every stratum</td><td>Some from EVERY group — proportional representation across all subgroups</td></tr>
+      <tr><td><strong>Systematic Sampling</strong></td><td>Select every nth individual from an ordered list</td><td>Fixed interval: every 10th person, every 5th record</td></tr>
+      <tr><td><strong>Census</strong></td><td>Collects data from every single member of the entire population</td><td>"Every employee," "all customers" — 100% coverage</td></tr>
+      <tr><td><strong>Random Sampling</strong></td><td>Every member has an equal chance of selection</td><td>No bias in selection; used as a baseline</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout callout-exam">
+    <strong>Cluster vs Stratified — The Most Common Confusion:</strong><br>
+    Cluster = select WHOLE groups randomly, study everyone in those groups. Only some groups are included.<br>
+    Stratified = divide into groups, sample SOME INDIVIDUALS from EVERY group. All groups are represented.
+  </div>
+
+  <h3>Data Integration</h3>
+  <p>Data integration is the process of combining data from multiple, disparate source systems into a unified, consistent view for analysis. Example: merging HR employee data with payroll finance data to get a complete employee picture. This is what feeds a data warehouse.</p>
+
+  <div class="compare-grid">
+    <div class="compare-card cc-blue">
+      <div class="cc-title">ETL (Extract, Transform, Load)</div>
+      Data is extracted, <strong>transformed in a separate engine</strong>, then loaded into the destination. Transformation happens BEFORE loading.
+    </div>
+    <div class="compare-card cc-green">
+      <div class="cc-title">ELT (Extract, Load, Transform)</div>
+      Raw data is extracted and loaded first, then <strong>transformed inside the destination warehouse</strong> using the warehouse's computing power. Transformation happens AFTER loading.
+    </div>
+  </div>
+
+  <div class="callout callout-key">
+    <strong>ETL vs ELT:</strong> "Load raw data and transform within the warehouse using its computing power" = ELT. If transformation happens before loading (in a staging/processing engine) = ETL.
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- OBJECTIVE 2.2 -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="section" id="obj22">
+  <span class="anchor" id="obj22"></span>
+  <div class="section-header">
+    <div class="section-num">2.2</div>
+    <div class="section-header-text">
+      <h2>Data Exploration &amp; Identifying Inconsistencies</h2>
+      <p>Data quality issues, anomalies, validation, redundancy, and outliers</p>
+    </div>
+  </div>
+
+  <h3>Data Quality Issue Types</h3>
+
+  <table>
+    <thead>
+      <tr><th>Issue Type</th><th>Definition</th><th>Example</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>Validation Error</strong></td><td>Input doesn't meet required format or type rules. A field rule is missing or misconfigured.</td><td>Phone number field contains "555-12AB" — letters allowed in a numeric field</td></tr>
+      <tr><td><strong>Completeness</strong></td><td>Data is missing (null, empty, absent)</td><td>Customer records with no email address or empty date of birth</td></tr>
+      <tr><td><strong>Redundancy</strong></td><td>Same information stored in multiple forms, causing inconsistency</td><td>Both "California" and "CA" stored in every record — two representations of the same value</td></tr>
+      <tr><td><strong>Outlier</strong></td><td>A data point far outside the normal range of the dataset</td><td>One store reporting $150,000 when all others report $10K–$15K</td></tr>
+      <tr><td><strong>Duplication</strong></td><td>The same record appears more than once</td><td>Same customer ID listed twice with identical information</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout callout-warn">
+    <strong>Validation vs Normalization Confusion:</strong> When a phone field accepts letters instead of digits — that's a <strong>validation</strong> problem (missing input rule). Normalization is the <em>solution to redundancy</em> (a schema design technique). Normalization is a fix, not the name of the problem.
+  </div>
+
+  <h3>Missing Values &amp; Imputation</h3>
+  <div class="card">
+    <div class="card-title">Choosing the Right Imputation Method <span class="card-tag tag-red">Appeared Twice (Q38 &amp; Q65, Exam 6)</span></div>
+    <ul>
+      <li><strong>Mean imputation:</strong> Good for normally distributed data. Distorted by skew and outliers — the mean gets pulled toward extreme values.</li>
+      <li><strong>Median imputation:</strong> The robust alternative when data is skewed. The median represents the middle value and is unaffected by extreme outliers. <em>When the scenario mentions skew or outlier concerns, always choose the median.</em></li>
+      <li><strong>Standardization ≠ Imputation:</strong> Standardizing (z-score scaling) rescales existing values. It does NOT fill missing values — imputation must happen first.</li>
+      <li><strong>Never:</strong> Delete the entire dataset to handle missing values in one column. Drop only the missing rows if necessary, or impute.</li>
+    </ul>
+  </div>
+
+  <h3>Outliers</h3>
+  <p>An outlier is a single data point that lies far outside the normal distribution of the rest of the data. Outliers always warrant investigation — they may indicate data entry errors, exceptional events, or genuinely unusual performance. A $150,000 sales figure when all others are $10K–$15K is an outlier, not a missing value, and not a normalized value.</p>
+
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- OBJECTIVE 2.3 -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="section" id="obj23">
+  <span class="anchor" id="obj23"></span>
+  <div class="section-header">
+    <div class="section-num">2.3</div>
+    <div class="section-header-text">
+      <h2>Data Transformation &amp; Cleansing Techniques</h2>
+      <p>Reshaping, normalizing, scaling, merging, and cleaning data</p>
+    </div>
+  </div>
+
+  <h3>Key Transformation Techniques</h3>
+
+  <table>
+    <thead>
+      <tr><th>Technique</th><th>What It Does</th><th>Signal Words</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>Exploding</strong></td><td>Splits a single cell containing multiple values (comma-separated list) into one row per value. One row becomes many rows.</td><td>"Tags column," "split into rows," "comma-separated list," "count each category"</td></tr>
+      <tr><td><strong>Normalization (Schema)</strong></td><td>Database design technique to eliminate redundancy by extracting repeated data into its own table and referencing via foreign key</td><td>"Repeated data in every row," "CategoryName in every product row," "eliminate redundancy"</td></tr>
+      <tr><td><strong>Aggregation</strong></td><td>Combines/summarizes multiple values into one (SUM, COUNT, AVG). Opposite direction from exploding.</td><td>"Total," "sum," "count," "average per group"</td></tr>
+      <tr><td><strong>Merging / Concatenation</strong></td><td>Combines separate datasets with identical structure by stacking rows (appending)</td><td>"Four quarterly files with same columns," "combine into annual dataset"</td></tr>
+      <tr><td><strong>Joining</strong></td><td>Combines two tables side-by-side on a shared key column (adds columns, not rows)</td><td>"Match products to supplier names," "related records from two tables"</td></tr>
+      <tr><td><strong>Parsing</strong></td><td>Splits a column's content into components. Does not combine files.</td><td>"Split full name into first/last," "extract domain from email"</td></tr>
+      <tr><td><strong>Binning</strong></td><td>Groups continuous numeric values into discrete ranges/buckets</td><td>"Age groups 0–18, 19–35, 36–60," "income brackets"</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout callout-exam">
+    <strong>Exploding vs Aggregation (Common Trap):</strong> Exploding = one row becomes many (splitting). Aggregation = many rows become one (summarizing). They are opposite operations. "Split tags into rows" = Exploding. "Sum sales by region" = Aggregation.
+  </div>
+
+  <h3>Data Scaling Methods</h3>
+
+  <div class="compare-grid">
+    <div class="compare-card cc-red">
+      <div class="cc-title">Min-Max Scaling (0 to 1)</div>
+      Scales all values to a 0–1 range using min and max as anchors. Extremely sensitive to outliers — a single extreme value stretches the scale and compresses all other values near 0 or 1. Worst choice when outliers are present.
+    </div>
+    <div class="compare-card cc-blue">
+      <div class="cc-title">Z-Score Standardization</div>
+      Scales based on how many standard deviations a value is from the mean. More robust than min-max with outliers. Formula: (value – mean) / std dev.
+    </div>
+    <div class="compare-card cc-green">
+      <div class="cc-title">Robust Scaling (Median/IQR)</div>
+      Uses median and interquartile range instead of mean and std dev. Most resistant to outliers of all scaling methods. Ideal when data is heavily skewed.
+    </div>
+  </div>
+
+  <h3>SQL Transformation Operations</h3>
+  <table>
+    <thead>
+      <tr><th>Operation</th><th>Purpose</th><th>Key Distinction</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>UNION</code></td><td>Stacks two result sets vertically; removes duplicates (implicit DISTINCT)</td><td>Same structure required; de-duplicates; performance cost</td></tr>
+      <tr><td><code>UNION ALL</code></td><td>Stacks two result sets; preserves ALL rows including duplicates</td><td>Faster than UNION — no deduplication step. Use when duplicates are acceptable.</td></tr>
+      <tr><td><code>JOIN</code></td><td>Combines two tables side-by-side on a matching key; adds columns</td><td>Use when you need data from two tables in one row</td></tr>
+      <tr><td><code>DISTINCT</code></td><td>Removes duplicate rows from a result set</td><td>Add to SELECT clause: SELECT DISTINCT ... FROM ...</td></tr>
+      <tr><td>Nested Query (Subquery)</td><td>Inner query computes a value first; outer query uses that value as a filter</td><td>"Calculate average first, then filter records above it"</td></tr>
+      <tr><td>Parameterized Query</td><td>Uses placeholders instead of hardcoded values; reusable + prevents SQL injection</td><td>"Reuse same query for different countries without hardcoding"</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Normalization (Schema Design)</h3>
+  <div class="card">
+    <div class="card-title">When and How to Normalize</div>
+    When non-key data (like CategoryName and CategoryDescription) is repeated in every row, you have a normalization problem. The fix:
+    <ol style="margin-top: 8px;">
+      <li>Move the repeated data (category info) to its own separate table</li>
+      <li>Assign it a primary key (CategoryID)</li>
+      <li>Replace the repeated columns in the original table with a foreign key (CategoryID)</li>
+    </ol>
+    This eliminates redundancy and prevents update anomalies. Remember: normalization is the <em>solution</em>, not the problem. The problem is <em>redundancy</em>.
+  </div>
+
+  <h3>Data Governance Documentation</h3>
+  <div class="compare-grid">
+    <div class="compare-card cc-blue">
+      <div class="cc-title">Parent-Child Structure</div>
+      One governing "parent" document (e.g., Corporate Data Strategy) branches into multiple subordinate "child" documents (Data Storage Standards, Access Control Guidelines). Hierarchical and centralized.
+    </div>
+    <div class="compare-card cc-orange">
+      <div class="cc-title">Canonical Model</div>
+      A single, agreed-upon data definition and structure that all source systems map to during integration. Eliminates "active customer" definition conflicts across systems. Applied during integration with mapping rules.
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- OBJECTIVE 3.1 -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="section" id="obj31">
+  <span class="anchor" id="obj31"></span>
+  <div class="section-header">
+    <div class="section-num">3.1</div>
+    <div class="section-header-text">
+      <h2>Communication Approaches for Data Analysis</h2>
+      <p>Matching depth, format, and audience — executives, managers, operations, technical teams</p>
+    </div>
+  </div>
+
+  <h3>The Audience-Detail Ladder</h3>
+
+  <div class="callout callout-exam">
+    <strong>Core Rule:</strong> Match the level of detail to the audience's role and need. More detail is not always better — wrong-level detail wastes the audience's time and obscures key messages.
+  </div>
+
+  <table>
+    <thead>
+      <tr><th>Audience</th><th>What They Need</th><th>Best Format</th><th>Avoid</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>C-Level Executives</strong></td>
+        <td>Strategic, high-level takeaways aligned with business goals. ROI, growth trends, key outcomes.</td>
+        <td>Executive summary with key metrics and charts. Concise, no jargon.</td>
+        <td>Multi-tab dashboards, line-by-line region analysis, verbatim feedback</td>
+      </tr>
+      <tr>
+        <td><strong>Managers / Directors</strong></td>
+        <td>Trend summaries, department-level performance, period-over-period comparisons</td>
+        <td>Monthly dashboards, summary reports with trend charts</td>
+        <td>Row-level error details, raw transaction logs</td>
+      </tr>
+      <tr>
+        <td><strong>Individual Contributors (Operations)</strong></td>
+        <td>Specific, actionable, row-level data. Which records failed? What error? Which field?</td>
+        <td>Detailed error report with affected records, error messages, field names</td>
+        <td>Bar charts of trends over time, monthly summaries, forecasting models</td>
+      </tr>
+      <tr>
+        <td><strong>Technical Teams (Engineers)</strong></td>
+        <td>Backend logs, event timelines, error codes, stack traces for root-cause analysis</td>
+        <td>Raw logs + event timeline of system events</td>
+        <td>Infographics, plain-language summaries, customer-facing impact descriptions</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>Report Formats by Purpose</h3>
+  <div class="compare-grid">
+    <div class="compare-card cc-blue">
+      <div class="cc-title">Ad Hoc Report</div>
+      Created on demand for a single, specific question. One-time, manually generated, not on a schedule. "The VP urgently needs to know how last night's email campaign performed."
+    </div>
+    <div class="compare-card cc-green">
+      <div class="cc-title">Snapshot Report Archive</div>
+      Captures and freezes data at a specific point in time. Immune to retroactive edits. Used for compliance — proving what the data looked like at month-end.
+    </div>
+    <div class="compare-card cc-purple">
+      <div class="cc-title">Real-Time Monitoring</div>
+      Continuously processes streaming data and triggers instant alerts when thresholds are crossed. "Detect intrusions as they happen." Cannot be an ad hoc or scheduled report.
+    </div>
+    <div class="compare-card cc-orange">
+      <div class="cc-title">Scheduled Dashboard</div>
+      Refreshes at fixed intervals (daily, weekly). Shows trends over time. Not instant — introduces delay between events and visibility.
+    </div>
+  </div>
+
+  <div class="callout callout-key">
+    <strong>Snapshot vs Archive:</strong> Snapshot = point-in-time capture for rollback/recovery (before a major update). Archive = long-term storage of historical data no longer actively used (retention, compliance). Both preserve historical data — but snapshot is about recovery, archive is about retention.
+  </div>
+
+  <h3>Operational Report Content</h3>
+  <div class="card">
+    <div class="card-title">SLA Breach Reports (Operational Team Leads) <span class="card-tag tag-teal">Exam 6</span></div>
+    When a support team lead needs to identify which tickets breached SLA and which queue caused delays: the correct answer is a <strong>detailed internal report with SLA KPIs, queue-level breakdowns, and exception lists</strong>. Executive summaries strip away the operational detail that the team lead needs to act on. Research papers are for academic audiences.
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- OBJECTIVE 3.2 -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="section" id="obj32">
+  <span class="anchor" id="obj32"></span>
+  <div class="section-header">
+    <div class="section-num">3.2</div>
+    <div class="section-header-text">
+      <h2>Statistical Methods &amp; Functions</h2>
+      <p>Analytics types, measures of center and spread, regression, optimization, functions</p>
+    </div>
+  </div>
+
+  <h3>Analytics Types — The Most Tested Hierarchy</h3>
+
+  <div class="callout callout-exam">
+    <strong>The Four-Level Framework (must memorize):</strong><br>
+    Descriptive → Diagnostic → Predictive → Prescriptive
+  </div>
+
+  <div class="compare-grid">
+    <div class="compare-card cc-blue">
+      <div class="cc-title">1. Descriptive Analytics</div>
+      <strong>What happened?</strong> Summarizes historical data. Averages, totals, trends on existing data. "Show average monthly revenue across the year." Uses: pivot tables, dashboards, summary statistics.
+    </div>
+    <div class="compare-card cc-orange">
+      <div class="cc-title">2. Diagnostic Analytics</div>
+      <strong>Why did it happen?</strong> Root cause analysis. Examining past data to understand the cause of an observed outcome. Uses: drill-down reports, correlation analysis.
+    </div>
+    <div class="compare-card cc-purple">
+      <div class="cc-title">3. Predictive Analytics / Modeling</div>
+      <strong>What will happen?</strong> Forecasts future outcomes using historical data. Regression, classification models. "Estimate next quarter's import volumes."
+    </div>
+    <div class="compare-card cc-red">
+      <div class="cc-title">4. Prescriptive Analytics</div>
+      <strong>What should we do?</strong> Recommends the optimal action under constraints. Optimization algorithms. "Best price and budget combo to maximize profit." "Most efficient delivery routes."
+    </div>
+  </div>
+
+  <div class="callout callout-key">
+    <strong>Prescriptive Signal Words:</strong> "best combination," "maximize," "minimize," "optimize," "most efficient," "recommend action." If the question asks what decision to make, the answer is prescriptive. If it just asks what will happen, it's predictive. If it summarizes what already happened, it's descriptive.
+  </div>
+
+  <h3>Measures of Center (Central Tendency)</h3>
+  <table>
+    <thead>
+      <tr><th>Measure</th><th>What It Describes</th><th>When to Use</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>Mean</strong></td><td>Arithmetic average of all values</td><td>Normally distributed data; no significant outliers</td></tr>
+      <tr><td><strong>Median</strong></td><td>Middle value of an ordered dataset</td><td>Skewed data or when outliers are present; more robust than mean</td></tr>
+      <tr><td><strong>Mode</strong></td><td>Most frequently occurring value</td><td>Categorical data; nominal data; identifying most common value</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout callout-warn">
+    <strong>Critical Distinction:</strong> Standard deviation and variance measure <em>spread</em> (how far values are from the mean) — NOT central tendency. "Typical value" or "central value" always means mean, median, or mode. Never standard deviation.
+  </div>
+
+  <h3>Measures of Spread (Dispersion)</h3>
+  <table>
+    <thead>
+      <tr><th>Measure</th><th>Definition</th><th>Strength</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>Range</strong></td><td>Max minus min. Crude measure.</td><td>Simple; highly distorted by a single extreme value</td></tr>
+      <tr><td><strong>IQR (Interquartile Range)</strong></td><td>Q3 minus Q1 — spread of the middle 50% of data</td><td>Robust; not affected by outliers. Best for comparing consistency.</td></tr>
+      <tr><td><strong>Variance</strong></td><td>Average squared deviation from the mean</td><td>Measures spread; hard to interpret (squared units)</td></tr>
+      <tr><td><strong>Standard Deviation</strong></td><td>Square root of variance; same units as data</td><td>Most commonly used spread measure; sensitive to outliers</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Statistical Methods for Predictions</h3>
+  <div class="compare-grid">
+    <div class="compare-card cc-blue">
+      <div class="cc-title">Logistic Regression</div>
+      Predicts the probability of a binary outcome (yes/no, filed/not filed). Use for: "likelihood of a claim being filed," "will a customer churn." Binary probability forecasting.
+    </div>
+    <div class="compare-card cc-green">
+      <div class="cc-title">Linear Regression</div>
+      Models the relationship between variables to predict a continuous outcome. "Predicted sales based on advertising spend."
+    </div>
+    <div class="compare-card cc-purple">
+      <div class="cc-title">Optimization Algorithm</div>
+      Finds the best solution from possible options given constraints and objectives. "Most efficient delivery route minimizing fuel and time" (Travelling Salesman Problem type). This is prescriptive.
+    </div>
+    <div class="compare-card cc-orange">
+      <div class="cc-title">Hypothesis Testing</div>
+      Evaluates whether an observed effect is statistically significant. Tests a claim about existing data — does NOT generate probability forecasts.
+    </div>
+  </div>
+
+  <h3>Spreadsheet Functions</h3>
+  <table>
+    <thead>
+      <tr><th>Function</th><th>Purpose</th><th>Key Distinction</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>DATEDIF()</code></td><td>Calculates the interval between two dates (days, months, years)</td><td>Requires two dates; returns a duration. Different from DAY().</td></tr>
+      <tr><td><code>DAY()</code></td><td>Extracts the day-of-month number (1–31) from a single date</td><td>Only works on one date; does not compute a span</td></tr>
+      <tr><td><code>MONTH()</code></td><td>Extracts the month number (1–12) from a date</td><td>"Which month did this transaction fall in?" Use MONTH().</td></tr>
+      <tr><td><code>NOW()</code></td><td>Returns the current date and time</td><td>Current moment only; cannot calculate intervals</td></tr>
+      <tr><td><code>EOMONTH()</code></td><td>Returns the last day of a month n months in the future/past</td><td>Returns a date; does not extract month number</td></tr>
+      <tr><td><code>LEFT()</code></td><td>Extracts characters from the beginning (left) of a string</td><td>Wrong for extracting domain from email — domain is on the right of @</td></tr>
+      <tr><td><code>MID()</code></td><td>Extracts a substring from the middle of a string at a specified position</td><td>Combined with FIND("@") to extract domain from email address</td></tr>
+      <tr><td><code>FIND()</code></td><td>Returns the position number of a character within a string</td><td>Locates the "@" but does not extract the text — pair with MID()</td></tr>
+      <tr><td><code>CONCAT()</code></td><td>Joins two or more strings together into one string</td><td>Combines text — does NOT extract substrings</td></tr>
+    </tbody>
+  </table>
+
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- OBJECTIVE 3.3 -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="section" id="obj33">
+  <span class="anchor" id="obj33"></span>
+  <div class="section-header">
+    <div class="section-num">3.3</div>
+    <div class="section-header-text">
+      <h2>Troubleshooting Tools &amp; Methods</h2>
+      <p>Diagnosing report errors, SQL errors, connector issues, and stale data</p>
+    </div>
+  </div>
+
+  <h3>Common Troubleshooting Scenarios</h3>
+
+  <table>
+    <thead>
+      <tr><th>Symptom</th><th>Most Likely Cause</th><th>Solution</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Report shows last month's data even though database was updated</td>
+        <td>Report was not refreshed after the database update (cached snapshot)</td>
+        <td>Manually refresh the report, or check refresh settings</td>
+      </tr>
+      <tr>
+        <td>Report shows no data at all with an error</td>
+        <td>Invalid connection string (report cannot connect to data source)</td>
+        <td>Verify the connection string; a connection error causes failure, not stale data</td>
+      </tr>
+      <tr>
+        <td>Dashboard takes several minutes to refresh</td>
+        <td>Live queries against multiple large datasets on every refresh</td>
+        <td>Convert live connections to scheduled extracts (pre-cached snapshots)</td>
+      </tr>
+      <tr>
+        <td>Third-party connector fails with unknown error code</td>
+        <td>Connector-specific issue not covered in internal documentation</td>
+        <td>Search the vendor's online knowledge base or community using the error code before escalating</td>
+      </tr>
+      <tr>
+        <td>SQL query returns "syntax error near FROM"</td>
+        <td>SELECT and FROM clauses are in the wrong order</td>
+        <td>Correct order: SELECT → FROM → WHERE → GROUP BY → HAVING → ORDER BY</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="callout callout-key">
+    <strong>Stale Data Rule:</strong> An invalid connection string causes an error (no data at all). Stale/old data with no error message = the report was not refreshed. These two symptoms have different causes.
+  </div>
+
+  <h3>Tools for Different Tasks</h3>
+  <div class="compare-grid">
+    <div class="compare-card cc-blue">
+      <div class="cc-title">Python</div>
+      Automate file ingestion, call APIs, transform datasets, load into databases. Industry-standard ETL scripting. Libraries: pandas, requests, SQLAlchemy.
+    </div>
+    <div class="compare-card cc-green">
+      <div class="cc-title">Vim / Notepad++</div>
+      Lightweight code editors for writing and editing small scripts. Syntax highlighting. No full IDE overhead. Both are valid answers for "lightweight editor."
+    </div>
+    <div class="compare-card cc-orange">
+      <div class="cc-title">SQL</div>
+      Query and transform data inside a relational database. Cannot natively automate file ingestion or make HTTP API calls.
+    </div>
+    <div class="compare-card cc-gray">
+      <div class="cc-title">Toad / MongoDB Compass</div>
+      GUI tools for database administration. Not scripting languages — cannot automate pipelines or call APIs.
+    </div>
+  </div>
+
+  <h3>Log Types</h3>
+  <table>
+    <thead>
+      <tr><th>Log Type</th><th>Purpose</th><th>Use Case</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>Event Log</strong></td><td>Structured records of discrete events: timestamp, user ID, IP, status</td><td>Security authentication analysis, anomaly detection</td></tr>
+      <tr><td><strong>Debug Log</strong></td><td>Verbose developer diagnostics for troubleshooting code</td><td>Finding bugs in application code; too noisy for security analysis</td></tr>
+      <tr><td><strong>Transaction Log</strong></td><td>Records database operations (INSERT, UPDATE, DELETE) for recovery</td><td>Database rollback and recovery; not for auth analysis</td></tr>
+      <tr><td><strong>Flat File Log</strong></td><td>Unstructured plain text</td><td>Simple logging; hard to search or analyze systematically</td></tr>
+    </tbody>
+  </table>
+
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- OBJECTIVE 4.1 -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="section" id="obj41">
+  <span class="anchor" id="obj41"></span>
+  <div class="section-header">
+    <div class="section-num">4.1</div>
+    <div class="section-header-text">
+      <h2>Appropriate Visual Elements</h2>
+      <p>Chart types, design principles, pivot tables, and when to use each</p>
+    </div>
+  </div>
+
+  <h3>Visualization Selector — Know Which Chart to Use</h3>
+
+  <table>
+    <thead>
+      <tr><th>Chart Type</th><th>Best For</th><th>NOT For</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>Bar Chart</strong></td><td>Comparing values across categories; showing differences between groups</td><td>Performing the grouping/aggregation itself; geographic data</td></tr>
+      <tr><td><strong>Line Chart</strong></td><td>Trends over time; continuous data over a sequence</td><td>Comparing categories at a single point in time; geographic distribution</td></tr>
+      <tr><td><strong>Pie Chart</strong></td><td>Parts of a whole at a single point in time (2–5 categories max)</td><td>50 states comparison; time trends; multi-dimensional breakdowns</td></tr>
+      <tr><td><strong>Choropleth Map</strong></td><td>Showing how a metric varies across geographic regions (states, countries)</td><td>Non-geographic data; trend over time</td></tr>
+      <tr><td><strong>Heat Map</strong></td><td>Intensity values in a matrix grid format</td><td>Geographic boundaries — heat maps use grids, not real map shapes</td></tr>
+      <tr><td><strong>Gantt Chart</strong></td><td>Project schedules and task timelines</td><td>Performance metrics; geographic data; comparing values by category</td></tr>
+      <tr><td><strong>Scatter Plot</strong></td><td>Relationship between two continuous variables; correlation</td><td>Categorical comparisons; time trends</td></tr>
+      <tr><td><strong>Pivot Table</strong></td><td>Group data by categories and time periods; compute aggregates interactively</td><td>Already-aggregated data that just needs to be displayed</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout callout-exam">
+    <strong>Pivot Table Rule:</strong> When a question asks how to <em>group data by categories and calculate aggregates</em>, the answer is a pivot table — not a bar chart. A bar chart displays pre-aggregated results. A pivot table performs the grouping and aggregation. "Group employees by department and calculate average hours" = pivot table.
+  </div>
+
+  <div class="callout callout-key">
+    <strong>Geographic Data = Choropleth Map:</strong> "Visualize number of users by state across the U.S." → Choropleth map. Pie chart loses geographic context. Heat map uses a grid, not geographic boundaries.
+  </div>
+
+  <h3>Design Principles for Cluttered Reports</h3>
+  <div class="card">
+    <div class="card-title">Improving Report Readability</div>
+    When a report is visually cluttered, the primary fix is to <strong>use consistent color schemes</strong> — this reduces visual noise and helps readers identify trends. Incorrect approaches include:
+    <ul style="margin-top: 8px;">
+      <li>Removing all gridlines — can hurt readability by eliminating reference points</li>
+      <li>Increasing data granularity — adds more clutter, not less</li>
+      <li>Changing the data source — changes what is shown, not how readable it is</li>
+    </ul>
+  </div>
+
+  <h3>Data Flow Diagrams (DFD)</h3>
+  <div class="compare-grid">
+    <div class="compare-card cc-blue">
+      <div class="cc-title">Data Flow Diagram (DFD)</div>
+      Maps how data moves between external entities, processes, and data stores. Used to document data movement across systems (collection → processing → storage → output).
+    </div>
+    <div class="compare-card cc-green">
+      <div class="cc-title">Entity Relationship Diagram (ERD)</div>
+      Shows the structure of a database — entities, attributes, and relationships between tables. Documents data structure, not data movement.
+    </div>
+    <div class="compare-card cc-orange">
+      <div class="cc-title">Process Flowchart</div>
+      Documents the steps of a business process or workflow. Focuses on process logic — not data movement between systems and storage locations.
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- OBJECTIVE 4.2 -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="section" id="obj42">
+  <span class="anchor" id="obj42"></span>
+  <div class="section-header">
+    <div class="section-num">4.2</div>
+    <div class="section-header-text">
+      <h2>Delivery &amp; Consumption Methods</h2>
+      <p>Report types, refresh modes, distribution channels, and self-service analytics</p>
+    </div>
+  </div>
+
+  <h3>Report Delivery Methods</h3>
+
+  <table>
+    <thead>
+      <tr><th>Delivery Method</th><th>Description</th><th>Use Case</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>Ad Hoc Report</strong></td><td>Created on demand, one-time, for a specific question. Not scheduled.</td><td>"VP needs urgent one-time analysis of last 24 hours"</td></tr>
+      <tr><td><strong>Snapshot Archive</strong></td><td>Frozen point-in-time data capture. Immune to retroactive changes.</td><td>Compliance: month-end figures that must not change when source data is updated</td></tr>
+      <tr><td><strong>Real-Time Monitoring</strong></td><td>Continuous processing of streaming data with instant threshold alerts</td><td>Cybersecurity intrusion detection, live operational dashboards</td></tr>
+      <tr><td><strong>Scheduled Dashboard</strong></td><td>Refreshes at fixed intervals (daily, weekly). Not real-time.</td><td>Regular management reporting, performance tracking</td></tr>
+      <tr><td><strong>Scheduled Extract</strong></td><td>Pre-processes and caches data on a schedule so users get fast snapshots instead of live queries</td><td>Fixing slow live-data dashboards — converts to pre-built snapshots</td></tr>
+      <tr><td><strong>Recurring Report</strong></td><td>Automatically generated on a fixed schedule (e.g., weekly)</td><td>Regular automated distribution to a standard audience</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout callout-key">
+    <strong>Snapshot vs Archive (Remixed):</strong><br>
+    Snapshot (report) = frozen data for compliance purposes (cannot change retroactively).<br>
+    Snapshot (database) = point-in-time capture for rollback before a major system change.<br>
+    Archive = long-term historical storage of data no longer actively used. Purpose is retention, not recovery or compliance freezing.
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- OBJECTIVE 5.3 -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="section" id="obj53">
+  <span class="anchor" id="obj53"></span>
+  <div class="section-header">
+    <div class="section-num">5.3</div>
+    <div class="section-header-text">
+      <h2>Data Privacy &amp; Protection Practices</h2>
+      <p>Regulations by jurisdiction, anonymization, encryption, access control, and data minimization</p>
+    </div>
+  </div>
+
+  <h3>Global Privacy Regulations — Match the Regulation to the Country</h3>
+
+  <table>
+    <thead>
+      <tr><th>Regulation</th><th>Jurisdiction</th><th>Scope</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>GDPR</strong></td><td>European Union</td><td>Personal data of EU residents; applies regardless of where the company is located</td></tr>
+      <tr><td><strong>LGPD</strong></td><td>Brazil</td><td>Personal data of Brazilian residents; modeled after GDPR; applies regardless of where servers are</td></tr>
+      <tr><td><strong>CCPA</strong></td><td>California, USA</td><td>Personal data of California residents</td></tr>
+      <tr><td><strong>HIPAA</strong></td><td>United States (Federal)</td><td>Healthcare data only — medical records, PHI (Protected Health Information)</td></tr>
+      <tr><td><strong>PCI DSS</strong></td><td>Global (payment industry)</td><td>Payment card data; requires encryption at rest using strong encryption; never store CVV</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout callout-exam">
+    <strong>Jurisdiction Rule:</strong> Always match the regulation to where the data SUBJECT lives, not where the server is. Brazilian customer data on US servers = LGPD. EU customer data = GDPR. California customer data = CCPA. US healthcare data = HIPAA.
+  </div>
+
+  <h3>Privacy Techniques</h3>
+
+  <table>
+    <thead>
+      <tr><th>Technique</th><th>What It Does</th><th>Reversible?</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>Anonymization</strong></td><td>Irreversibly removes personal identifiers so individuals cannot be re-identified</td><td>No — permanent. "Cannot be re-identified" = anonymization.</td></tr>
+      <tr><td><strong>Pseudonymization</strong></td><td>Replaces identifiers with pseudonyms; original identity can be recovered with a key</td><td>Yes — reversible with the key</td></tr>
+      <tr><td><strong>Data Masking</strong></td><td>Obscures values (preserving format) for display/testing purposes. Often retains structure.</td><td>Partially — depends on method; not the same as anonymization</td></tr>
+      <tr><td><strong>Encryption</strong></td><td>Scrambles data using a key; original can be recovered with the key</td><td>Yes — reversible with key. PCI DSS requires this for stored card data.</td></tr>
+      <tr><td><strong>Data Minimization</strong></td><td>Collect and share only the data necessary for the intended purpose; remove what's not needed</td><td>N/A — a principle of collection/sharing, not a transformation</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout callout-key">
+    <strong>"Cannot be re-identified" = Anonymization (irreversible).</strong><br>
+    Encryption scrambles but is reversible with a key — it does not make individuals unidentifiable.<br>
+    Data masking preserves format and is not truly irreversible in all implementations.
+  </div>
+
+  <h3>PCI DSS Requirements (Payment Card Data)</h3>
+  <div class="card">
+    <div class="card-title">What PCI DSS Requires <span class="card-tag tag-red">Common Exam Question</span></div>
+    <ul>
+      <li><strong>Encrypt cardholder data at rest</strong> using strong encryption methods (AES-256 or equivalent)</li>
+      <li><strong>Never store the CVV</strong> after authorization under any circumstances</li>
+      <li><strong>Never store data in plaintext</strong> — even partial plaintext (first 6 + last 4 visible, rest in plaintext) violates PCI DSS</li>
+      <li><strong>MD5 is NOT acceptable</strong> for protecting card data — it's a broken, insecure algorithm</li>
+      <li>Mask the PAN (card number) when displayed — show only first 6 and last 4 digits maximum</li>
+    </ul>
+  </div>
+
+  <h3>Access Control</h3>
+  <div class="card">
+    <div class="card-title">Role-Based Access Control (RBAC) <span class="card-tag tag-blue">Separation of Duties</span></div>
+    RBAC restricts what each user can see and do based on their job role. Assigning support agents a role that grants access to order status but not payment details is the direct mechanism for enforcing separation of duties at the data level.
+    <br><br>
+    <strong>What RBAC is NOT:</strong>
+    <ul style="margin-top: 6px;">
+      <li>Disk encryption — protects data at rest from external access; does not restrict authenticated users</li>
+      <li>HTTPS — protects data in transit; does not control what a logged-in user can see</li>
+      <li>Masking all customer names — addresses the wrong field; doesn't restrict by role</li>
+    </ul>
+  </div>
+
+  <h3>Data Privacy in Practice — Scenario Summary</h3>
+  <table>
+    <thead>
+      <tr><th>Scenario</th><th>Correct Privacy Concept</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Removing names, emails, phone numbers before sharing with analytics firm, keeping ZIP codes</td><td>Data minimization</td></tr>
+      <tr><td>Removing all personal identifiers so individuals cannot be re-identified</td><td>Data anonymization</td></tr>
+      <tr><td>Using purchase history to infer health conditions without telling customers</td><td>Transparency violation</td></tr>
+      <tr><td>AI tool consistently rejects one demographic group despite no intent to discriminate</td><td>Fairness / bias concern</td></tr>
+      <tr><td>Storing credit card numbers in plaintext</td><td>PCI DSS violation</td></tr>
+      <tr><td>Brazilian customer data on US servers</td><td>LGPD applies</td></tr>
+    </tbody>
+  </table>
+
+</div>
+
+<!-- QUICK REFERENCE: EXAM-READY CHEAT SHEET -->
+<div class="section" style="background: var(--surface);">
+  <div class="section-header">
+    <div class="section-num" style="background: var(--primary);">REF</div>
+    <div class="section-header-text">
+      <h2>Quick Reference — Exam Pattern Recognition</h2>
+      <p>Signal words → Correct answers. Memorize these patterns.</p>
+    </div>
+  </div>
+
+  <div class="keyword-box">
+    <span>"Multi-language / Unicode text"</span> → NVARCHAR<br>
+    <span>"Financial / no rounding errors"</span> → DECIMAL<br>
+    <span>"Images, videos, binary files"</span> → BLOB<br>
+    <span>"Large text documents"</span> → CLOB<br>
+    <span>"Non-sequential unique ID across servers"</span> → UUID<br>
+    <span>"Time zone + datetime arithmetic"</span> → TIMESTAMP<br>
+    <span>"Fixed-length single character"</span> → CHAR<br>
+    <span>"Variable-length ASCII text"</span> → VARCHAR<br>
+    <br>
+    <span>"Relationships between entities / recommendation engine"</span> → Graph database<br>
+    <span>"Complex joins + ACID + rollback"</span> → Relational database<br>
+    <span>"High-speed analytics + sparse data"</span> → Columnar database<br>
+    <span>"Nested/hierarchical in a single record"</span> → JSON / Document DB<br>
+    <span>"Department-specific analytics subset"</span> → Data mart<br>
+    <br>
+    <span>"Specify exact fields + reduce bandwidth"</span> → GraphQL API<br>
+    <span>"External service + JSON response"</span> → REST API<br>
+    <span>"XML + rigid schema"</span> → SOAP API<br>
+    <span>"Persistent streaming connection"</span> → WebSocket API<br>
+    <br>
+    <span>"Dedicated VM volume + expand/move between servers"</span> → Block storage<br>
+    <span>"Multiple users on local network sharing files"</span> → NAS (File storage)<br>
+    <span>"Metadata tagging + no traditional file system + scalable"</span> → Object storage<br>
+    <span>"Archive + rarely accessed + low cost"</span> → S3 Glacier<br>
+    <br>
+    <span>"What happened?"</span> → Descriptive analytics<br>
+    <span>"Why did it happen?"</span> → Diagnostic analytics<br>
+    <span>"What will happen?"</span> → Predictive analytics<br>
+    <span>"Best combination / maximize / optimize / what to do"</span> → Prescriptive analytics<br>
+    <br>
+    <span>"Brazilian residents' data"</span> → LGPD<br>
+    <span>"EU residents' data"</span> → GDPR<br>
+    <span>"California residents' data"</span> → CCPA<br>
+    <span>"US healthcare data"</span> → HIPAA<br>
+    <span>"Cannot be re-identified"</span> → Data anonymization<br>
+    <br>
+    <span>"Whole groups chosen randomly"</span> → Cluster sampling<br>
+    <span>"Some from EVERY group"</span> → Stratified sampling<br>
+    <span>"Every nth individual"</span> → Systematic sampling<br>
+    <br>
+    <span>"Skewed data + missing values"</span> → Impute with median (not mean)<br>
+    <span>"Outlier-sensitive scaling"</span> → Z-score (not min-max)<br>
+    <span>"Spread / consistency"</span> → IQR (not mean, not mode)<br>
+    <br>
+    <span>"Geographic metric by region/state"</span> → Choropleth map<br>
+    <span>"Group data + compute aggregates interactively"</span> → Pivot table<br>
+    <span>"Parts of a whole"</span> → Pie chart<br>
+    <span>"Trend over time"</span> → Line chart<br>
+    <br>
+    <span>"One-time urgent request"</span> → Ad hoc report<br>
+    <span>"Freeze data for compliance"</span> → Snapshot report archive<br>
+    <span>"Instant alerts from streaming data"</span> → Real-time monitoring<br>
+    <span>"Slow live dashboard"</span> → Convert to scheduled extracts
+  </div>
+
+</div>
+
+</main>
+
+<footer>
+  CompTIA Data+ Study Guide &nbsp;·&nbsp; Compiled from Exams 1–6 &nbsp;·&nbsp; All objectives covered &nbsp;·&nbsp; Good luck on the exam
+</footer>
+
+</body>
+</html>
