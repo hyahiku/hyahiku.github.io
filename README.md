@@ -12,7 +12,7 @@
 `Python` `SQL` `pandas` `numpy` `scikit-learn` `matplotlib` `seaborn` `plotly` `scipy`
 
 **Machine Learning & AI**
-`Neural Networks (from scratch)` `Backpropagation` `K-Means Clustering` `Linear Regression` `NLP` `sentence-transformers` `Word Embeddings (GloVe)` `TF-IDF` `Apriori` `Association Rules` `RAG-Inspired Retrieval` `Hypothesis Testing`
+`Neural Networks` `Backpropagation` `K-Means Clustering` `Linear Regression` `NLP` `sentence-transformers` `Word Embeddings (GloVe)` `TF-IDF` `Apriori` `Association Rules` `RAG-Inspired Retrieval` `Hypothesis Testing`
 
 **Data Engineering**
 `Data Cleaning & Preparation` `Feature Engineering` `StandardScaler` `Outlier Detection (IQR)` `Dummy Encoding` `CSV Pipeline Engineering` `Relational Databases`
@@ -21,7 +21,7 @@
 `Exploratory Data Analysis` `T-Test` `ANOVA` `Correlation Analysis` `Descriptive Statistics` `Time Series Forecasting` `Financial Modeling`
 
 **Tools & Platforms**
-`Jupyter Notebook` `Google Colab` `PySpark` `Microsoft Suite` `SharePoint` `Hugging Face Datasets` `Kaggle` `GitHub Pages`
+`Jupyter Notebook` `Google Colab` `PySpark` `Microsoft Suite` `SharePoint` `Hugging Face Datasets` `Kaggle`
 
 ---
 
