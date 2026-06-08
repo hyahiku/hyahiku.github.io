@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ScratchNet · From-Scratch Neural Network for PII Detection</title>
+<meta name="description" content="A feed-forward neural network built entirely in NumPy — no autograd — to detect Personally Identifiable Information in text. Method walkthrough, architecture, and results." />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,700;1,9..144,300;1,9..144,500&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #f4f2ee;
+    --surface: #ffffff;
+    --surface2: #ece8e1;
+    --border: #d9d4ca;
+    --ink: #161a33;          /* deep indigo */
+    --accent: #2c3568;       /* indigo */
+    --accent2: #4a5aa8;      /* lighter indigo */
+    --accent-light: #e9ebf6;
+    --copper: #b06a32;       /* warm accent */
+    --copper-light: #f7ecdf;
+    --green: #2f7d54;
+    --green-light: #e7f3ec;
+    --red: #b23a2e;
+    --red-light: #f7e6e3;
+    --text: #16161c;
+    --text-mid: #39383f;
+    --text-dim: #847f88;
+    --mono: 'DM Mono', monospace;
+    --serif: 'Fraunces', Georgia, serif;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { background: var(--bg); color: var(--text); font-family: var(--serif); font-weight: 300; line-height: 1.75; overflow-x: hidden; }
+
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 9999;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: rgba(244,242,238,0.92); backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1rem 3rem;
+  }
+  .nav-brand { font-family: var(--serif); font-size: 0.9rem; font-style: italic; color: var(--accent); }
+  .nav-links { display: flex; gap: 2.2rem; list-style: none; }
+  .nav-links a { font-family: var(--mono); font-size: 0.65rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-dim); text-decoration: none; transition: color 0.2s; }
+  .nav-links a:hover { color: var(--accent); }
+
+  /* HERO */
+  .hero { min-height: 100vh; padding-top: 70px; display: grid; grid-template-columns: 56% 44%; }
+  .hero-left {
+    background: var(--ink); display: flex; flex-direction: column;
+    justify-content: flex-end; padding: 5rem 4rem; position: relative; overflow: hidden;
+  }
+  .hero-left::after {
+    content: ''; position: absolute; bottom: -120px; right: -120px;
+    width: 360px; height: 360px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(176,106,50,0.18) 0%, transparent 70%);
+  }
+  /* faint neural grid behind hero */
+  .hero-net { position: absolute; inset: 0; opacity: 0.16; pointer-events: none; }
+  .hero-eyebrow {
+    font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.18em;
+    text-transform: uppercase; color: rgba(255,255,255,0.45); margin-bottom: 2rem;
+    display: flex; align-items: center; gap: 0.75rem; position: relative;
+    opacity: 0; animation: fadeUp 0.6s 0.2s forwards;
+  }
+  .hero-eyebrow::before { content: ''; width: 24px; height: 1px; background: rgba(255,255,255,0.3); }
+  .hero-title {
+    font-family: var(--serif); font-size: clamp(2.1rem, 4.3vw, 3.8rem);
+    font-weight: 700; line-height: 1.05; color: #fff; position: relative;
+    opacity: 0; animation: fadeUp 0.7s 0.35s forwards;
+  }
+  .hero-title em { font-style: italic; color: #c89a6e; }
+  .hero-sub {
+    margin-top: 1.5rem; font-size: 0.92rem; color: rgba(255,255,255,0.55);
+    max-width: 460px; line-height: 1.7; position: relative;
+    opacity: 0; animation: fadeUp 0.7s 0.5s forwards;
+  }
+  .hero-hypo {
+    margin-top: 2.5rem; padding: 1.4rem 1.5rem; border: 1px solid rgba(255,255,255,0.12);
+    background: rgba(255,255,255,0.05); position: relative;
+    opacity: 0; animation: fadeUp 0.7s 0.65s forwards;
+  }
+  .hypo-label { font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.15em; text-transform: uppercase; color: rgba(255,255,255,0.4); margin-bottom: 0.5rem; }
+  .hypo-text { font-size: 0.88rem; color: rgba(255,255,255,0.72); font-style: italic; line-height: 1.6; }
+  .hero-right {
+    background: var(--surface2); display: flex; flex-direction: column;
+    justify-content: center; padding: 5rem 3.5rem; gap: 1.9rem;
+    opacity: 0; animation: fadeIn 1s 0.8s forwards;
+  }
+  .hero-stat { border-left: 2px solid var(--border); padding-left: 1.25rem; }
+  .hero-stat .val { font-family: var(--serif); font-size: 2.1rem; font-weight: 700; color: var(--accent); display: block; line-height: 1; }
+  .hero-stat .lbl { font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-dim); margin-top: 0.35rem; display: block; }
+  .hero-stat.copper .val { color: var(--copper); }
+
+  /* MAIN */
+  main { max-width: 1080px; margin: 0 auto; padding: 0 3rem 8rem; }
+  section { margin-top: 6rem; }
+  .section-header { display: flex; align-items: baseline; gap: 1.5rem; margin-bottom: 2.5rem; padding-bottom: 1rem; border-bottom: 2px solid var(--text); }
+  .section-num { font-family: var(--mono); font-size: 0.65rem; letter-spacing: 0.12em; color: var(--accent2); }
+  h2 { font-family: var(--serif); font-size: clamp(1.5rem, 3vw, 2.2rem); font-weight: 500; color: var(--text); }
+  h3 { font-family: var(--serif); font-size: 1.05rem; font-weight: 500; color: var(--text); margin-bottom: 0.5rem; }
+  p { font-size: 0.95rem; color: var(--text-mid); margin-bottom: 1rem; }
+  p:last-child { margin-bottom: 0; }
+  .lead { font-size: 1.02rem; color: var(--text-mid); }
+
+  /* CARDS + GRIDS */
+  .card { background: var(--surface); border: 1px solid var(--border); padding: 2rem; transition: box-shadow 0.25s; }
+  .card:hover { box-shadow: 0 4px 20px rgba(0,0,0,0.06); }
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--border); border: 1px solid var(--border); }
+  .two-col > * { background: var(--surface); padding: 2rem; }
+  .three-col { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); }
+  .three-col > * { background: var(--surface); padding: 2rem; }
+
+  /* STAT BAND */
+  .stat-band { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); margin-top: 2rem; }
+  .stat-item { background: var(--surface); padding: 1.6rem; text-align: center; }
+  .stat-val { font-family: var(--serif); font-size: 1.7rem; font-weight: 700; color: var(--accent); display: block; line-height: 1; margin-bottom: 0.4rem; }
+  .stat-val.copper { color: var(--copper); }
+  .stat-val.green { color: var(--green); }
+  .stat-val.red { color: var(--red); }
+  .stat-lbl { font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-dim); }
+
+  /* INCIDENT */
+  .incident { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--border); border: 1px solid var(--border); margin-top: 1.5rem; }
+  .incident > div { background: var(--surface); padding: 1.75rem 2rem; }
+  .incident .big { font-family: var(--serif); font-size: 1.9rem; font-weight: 700; color: var(--red); display: block; line-height: 1; }
+  .incident .who { font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-dim); margin-top: 0.5rem; display: block; }
+  .incident .what { font-size: 0.86rem; color: var(--text-mid); margin-top: 0.6rem; }
+
+  /* STEPS */
+  .steps { display: flex; flex-direction: column; gap: 1px; background: var(--border); border: 1px solid var(--border); margin-top: 2rem; }
+  .step { background: var(--surface); padding: 1.6rem 2rem; display: grid; grid-template-columns: 56px 1fr; gap: 1.5rem; align-items: start; transition: background 0.2s; }
+  .step:hover { background: var(--surface2); }
+  .step-num { font-family: var(--serif); font-size: 1.9rem; font-weight: 700; color: var(--border); line-height: 1; }
+  .step-content h3 { font-size: 0.78rem; font-family: var(--mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent2); margin-bottom: 0.5rem; }
+  .step-content p { font-size: 0.88rem; margin: 0; }
+
+  /* INSIGHT CALLOUTS */
+  .insight { background: var(--accent-light); border: 1px solid rgba(74,90,168,0.22); padding: 1.4rem 1.8rem; margin: 1.5rem 0; }
+  .insight p { color: var(--text); margin: 0; font-size: 0.93rem; }
+  .copper-insight { background: var(--copper-light); border: 1px solid rgba(176,106,50,0.25); padding: 1.4rem 1.8rem; margin: 1.5rem 0; }
+  .copper-insight p { color: var(--text); margin: 0; font-size: 0.93rem; }
+  .insight .tag, .copper-insight .tag { font-family: var(--mono); font-size: 0.58rem; letter-spacing: 0.15em; text-transform: uppercase; display: block; margin-bottom: 0.5rem; }
+  .insight .tag { color: var(--accent2); }
+  .copper-insight .tag { color: var(--copper); }
+
+  /* EQUATION BLOCK */
+  .eq-block { background: var(--surface2); border: 1px solid var(--border); border-left: 3px solid var(--accent); padding: 1.4rem 2rem; margin: 1.5rem 0; }
+  .eq-label { font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--accent2); margin-bottom: 0.6rem; }
+  .eq { font-family: var(--mono); font-size: 0.86rem; color: var(--text); line-height: 1.9; overflow-x: auto; }
+  .eq .var { color: var(--accent); font-style: italic; }
+  .eq-note { font-size: 0.83rem; color: var(--text-dim); margin-top: 0.7rem; margin-bottom: 0; font-family: var(--serif); }
+
+  /* CODE */
+  pre.code { background: var(--ink); color: #d7d9e6; font-family: var(--mono); font-size: 0.76rem; line-height: 1.7; padding: 1.5rem 1.75rem; overflow-x: auto; border: 1px solid var(--border); margin: 1.25rem 0; }
+  pre.code .kw { color: #c89a6e; }
+  pre.code .fn { color: #8fa6e8; }
+  pre.code .cm { color: #6f7390; font-style: italic; }
+  pre.code .st { color: #9ecb9e; }
+  .code-cap { font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-dim); margin-top: -0.5rem; margin-bottom: 1.5rem; }
+
+  /* PIPELINE FLOW (SVG container) */
+  .flow-wrap { margin-top: 2rem; border: 1px solid var(--border); background: var(--surface); padding: 2rem 1.5rem; overflow-x: auto; }
+  .flow-svg { width: 100%; min-width: 720px; height: auto; display: block; }
+
+  /* DATA VIZ — bars */
+  .viz { margin-top: 2rem; border: 1px solid var(--border); background: var(--surface); padding: 2rem; }
+  .viz-title { font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-dim); margin-bottom: 1.5rem; }
+  .bar-row { display: grid; grid-template-columns: 130px 1fr 70px; align-items: center; gap: 1rem; margin-bottom: 0.9rem; }
+  .bar-lbl { font-family: var(--mono); font-size: 0.7rem; color: var(--text-mid); }
+  .bar-track { background: var(--surface2); height: 26px; position: relative; overflow: hidden; }
+  .bar-fill { height: 100%; transition: width 1s ease; }
+  .bar-val { font-family: var(--mono); font-size: 0.72rem; color: var(--text-mid); text-align: right; }
+
+  /* CONFUSION MATRIX */
+  .cm-wrap { display: grid; grid-template-columns: auto 1fr; gap: 0; margin-top: 1rem; max-width: 420px; }
+  .cm-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 4px; }
+  .cm-cell { aspect-ratio: 1.6 / 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #fff; padding: 0.5rem; }
+  .cm-cell .n { font-family: var(--serif); font-size: 2rem; font-weight: 700; line-height: 1; }
+  .cm-cell .t { font-family: var(--mono); font-size: 0.55rem; letter-spacing: 0.08em; text-transform: uppercase; margin-top: 0.4rem; opacity: 0.85; }
+  .cm-axis-x { font-family: var(--mono); font-size: 0.58rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-dim); text-align: center; margin-top: 0.6rem; }
+  .cm-axis-y { font-family: var(--mono); font-size: 0.58rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-dim); writing-mode: vertical-rl; transform: rotate(180deg); display: flex; align-items: center; justify-content: center; padding-right: 0.5rem; }
+
+  /* METRICS TABLE */
+  table.metrics { width: 100%; border-collapse: collapse; margin-top: 1.5rem; font-size: 0.85rem; }
+  table.metrics th, table.metrics td { padding: 0.75rem 1rem; text-align: right; border-bottom: 1px solid var(--border); font-family: var(--mono); font-size: 0.78rem; color: var(--text-mid); }
+  table.metrics th { font-size: 0.6rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-dim); border-bottom: 2px solid var(--text); }
+  table.metrics td:first-child, table.metrics th:first-child { text-align: left; color: var(--text); }
+  table.metrics tr.hl td { background: var(--accent-light); color: var(--accent); }
+
+  /* NETWORK DIAGRAM */
+  .net-wrap { margin-top: 2rem; border: 1px solid var(--border); background: var(--surface); padding: 2rem 1rem; overflow-x: auto; }
+
+  /* TAKEAWAYS */
+  .takeaways { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--border); border: 1px solid var(--border); margin-top: 2rem; }
+  .takeaway { background: var(--surface); padding: 2rem; transition: background 0.2s; }
+  .takeaway:hover { background: var(--surface2); }
+  .takeaway-icon { font-family: var(--mono); font-size: 0.7rem; color: var(--copper); letter-spacing: 0.1em; margin-bottom: 0.75rem; display: block; }
+
+  /* STACK */
+  .stack { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1.5rem; }
+  .stack-pill { font-family: var(--mono); font-size: 0.65rem; padding: 0.35rem 0.8rem; border: 1px solid var(--border); color: var(--text-dim); background: var(--surface); transition: border-color 0.2s, color 0.2s; }
+  .stack-pill:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* FOOTER */
+  footer { border-top: 1px solid var(--border); padding: 2rem 3rem; display: flex; justify-content: space-between; align-items: center; max-width: 1080px; margin: 0 auto; }
+  .footer-text { font-family: var(--mono); font-size: 0.65rem; letter-spacing: 0.08em; color: var(--text-dim); }
+  .footer-link { font-family: var(--mono); font-size: 0.65rem; color: var(--accent2); text-decoration: none; }
+  .footer-link:hover { opacity: 0.7; }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  .reveal { opacity: 0; transform: translateY(14px); transition: opacity 0.6s, transform 0.6s; }
+  .reveal.visible { opacity: 1; transform: none; }
+
+  @media (max-width: 900px) {
+    nav { padding: 1rem 1.25rem; }
+    .nav-links { display: none; }
+    .hero { grid-template-columns: 1fr; }
+    .hero-left { padding: 4rem 2rem; }
+    .hero-right { padding: 3rem 2rem; }
+    main { padding: 0 1.25rem 5rem; }
+    .two-col, .three-col, .incident, .takeaways { grid-template-columns: 1fr; }
+    .stat-band { grid-template-columns: repeat(2, 1fr); }
+    .bar-row { grid-template-columns: 90px 1fr 56px; }
+    footer { flex-direction: column; gap: 0.75rem; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <span class="nav-brand">ScratchNet</span>
+  <ul class="nav-links">
+    <li><a href="#overview">Overview</a></li>
+    <li><a href="#pipeline">Pipeline</a></li>
+    <li><a href="#data">Data</a></li>
+    <li><a href="#embeddings">Embeddings</a></li>
+    <li><a href="#model">Model</a></li>
+    <li><a href="#training">Training</a></li>
+    <li><a href="#results">Results</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-left">
+    <svg class="hero-net" viewBox="0 0 560 600" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+      <g stroke="#c89a6e" stroke-width="0.6" opacity="0.5">
+        <line x1="60" y1="120" x2="260" y2="100"/><line x1="60" y1="120" x2="260" y2="300"/><line x1="60" y1="120" x2="260" y2="500"/>
+        <line x1="60" y1="320" x2="260" y2="100"/><line x1="60" y1="320" x2="260" y2="300"/><line x1="60" y1="320" x2="260" y2="500"/>
+        <line x1="60" y1="500" x2="260" y2="100"/><line x1="60" y1="500" x2="260" y2="300"/><line x1="60" y1="500" x2="260" y2="500"/>
+        <line x1="260" y1="100" x2="460" y2="220"/><line x1="260" y1="300" x2="460" y2="220"/><line x1="260" y1="500" x2="460" y2="220"/>
+        <line x1="260" y1="100" x2="460" y2="380"/><line x1="260" y1="300" x2="460" y2="380"/><line x1="260" y1="500" x2="460" y2="380"/>
+      </g>
+      <g fill="#fff">
+        <circle cx="60" cy="120" r="5"/><circle cx="60" cy="320" r="5"/><circle cx="60" cy="500" r="5"/>
+        <circle cx="260" cy="100" r="5"/><circle cx="260" cy="300" r="5"/><circle cx="260" cy="500" r="5"/>
+        <circle cx="460" cy="220" r="5"/><circle cx="460" cy="380" r="5"/>
+      </g>
+    </svg>
+    <div class="hero-eyebrow">Deep Learning · NumPy · Backprop from Scratch</div>
+    <h1 class="hero-title">A Neural Network<br>Built <em>From Scratch</em><br>to Catch PII</h1>
+    <p class="hero-sub">A feed-forward classifier implemented entirely in NumPy — manual forward pass, manual backpropagation, no PyTorch or TensorFlow — trained to decide whether a block of text contains Personally Identifiable Information.</p>
+    <div class="hero-hypo">
+      <div class="hypo-label">The Question</div>
+      <div class="hypo-text">Can a transparent, hand-coded network learn to flag unprotected PII in documents and email well enough to be useful for compliance?</div>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="hero-stat">
+      <span class="val">83.33%</span>
+      <span class="lbl">Held-out test accuracy</span>
+    </div>
+    <div class="hero-stat copper">
+      <span class="val">0.036s</span>
+      <span class="lbl">Inference time, full test set</span>
+    </div>
+    <div class="hero-stat">
+      <span class="val">300-d</span>
+      <span class="lbl">Averaged GloVe input vectors</span>
+    </div>
+    <div class="hero-stat copper">
+      <span class="val">0</span>
+      <span class="lbl">Autograd libraries used</span>
+    </div>
+  </div>
+</div>
+
+<main>
+
+  <!-- OVERVIEW -->
+  <section id="overview">
+    <div class="section-header reveal">
+      <span class="section-num">01</span>
+      <h2>Overview &amp; Motivation</h2>
+    </div>
+
+    <div class="two-col reveal">
+      <div>
+        <h3>The Business Problem</h3>
+        <p>Businesses, governments, and other organizations routinely handle the Personally Identifiable Information (PII) of customers, employees, and vendors. When that PII leaks or is transmitted where it shouldn't be, the legal, financial, and reputational consequences are severe — and the threat landscape is growing as attackers adopt more capable tooling of their own.</p>
+      </div>
+      <div>
+        <h3>The Proposed Solution</h3>
+        <p>An in-house model that scans documents, emails, and other correspondence and flags whether they contain PII. Anything flagged can be masked or blocked before it leaves the organization. The goal of this project is to prove the concept with a fully transparent network — every weight and gradient hand-derived — rather than a black-box framework.</p>
+      </div>
+    </div>
+
+    <div class="insight reveal">
+      <span class="tag">Why build it from scratch?</span>
+      <p>Frameworks hide the mechanics. Implementing forward propagation, the loss, and backpropagation by hand forces every design choice — initialization, activation, regularization, the gradient of the loss — to be explicit and defensible. The result is a model whose behavior can be explained line by line, which matters for a compliance-adjacent use case.</p>
+    </div>
+
+    <h3 class="reveal" style="margin-top:2.5rem">Why this matters — recent breaches</h3>
+    <p class="reveal">The cost of getting PII handling wrong is not hypothetical. Two 2024 incidents illustrate the scale:</p>
+    <div class="incident reveal">
+      <div>
+        <span class="big">192.7M</span>
+        <span class="who">Change Healthcare · 2024</span>
+        <p class="what">People whose PII was exposed in a single healthcare-sector breach.</p>
+      </div>
+      <div>
+        <span class="big">2.9B</span>
+        <span class="who">National Public Data · 2024</span>
+        <p class="what">Records leaked, including Social Security numbers and other personal details.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- PIPELINE -->
+  <section id="pipeline">
+    <div class="section-header reveal">
+      <span class="section-num">02</span>
+      <h2>Project Pipeline</h2>
+    </div>
+    <p class="lead reveal">The full path from raw text to a trained, testable classifier. Everything downstream of embedding is pure NumPy.</p>
+
+    <div class="flow-wrap reveal">
+      <svg class="flow-svg" viewBox="0 0 980 360" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Project pipeline flowchart">
+        <defs>
+          <marker id="arrow" markerWidth="9" markerHeight="9" refX="6" refY="3" orient="auto" markerUnits="strokeWidth">
+            <path d="M0,0 L6,3 L0,6 z" fill="#4a5aa8"/>
+          </marker>
+          <style>
+            .fbox{fill:#fff;stroke:#d9d4ca;stroke-width:1.2;}
+            .fbox.ink{fill:#161a33;}
+            .fbox.cop{fill:#f7ecdf;stroke:#b06a32;}
+            .ftitle{font-family:'DM Mono',monospace;font-size:11px;fill:#161a33;font-weight:500;}
+            .ftitle.w{fill:#fff;}
+            .fsub{font-family:'DM Mono',monospace;font-size:8.5px;fill:#847f88;}
+            .fsub.w{fill:rgba(255,255,255,.6);}
+            .fstage{font-family:'DM Mono',monospace;font-size:8px;fill:#4a5aa8;letter-spacing:.1em;}
+            .fline{stroke:#4a5aa8;stroke-width:1.4;fill:none;}
+          </style>
+        </defs>
+
+        <!-- Row 1: data prep -->
+        <text x="20" y="28" class="fstage">DATA PREPARATION</text>
+        <g>
+          <rect class="fbox" x="20" y="40" width="150" height="66" rx="2"/>
+          <text x="34" y="68" class="ftitle">Load dataset</text>
+          <text x="34" y="84" class="fsub">pii-masking-300k</text>
+          <text x="34" y="97" class="fsub">English · 29,908 rows</text>
+        </g>
+        <line class="fline" x1="170" y1="73" x2="208" y2="73" marker-end="url(#arrow)"/>
+        <g>
+          <rect class="fbox" x="212" y="40" width="150" height="66" rx="2"/>
+          <text x="226" y="68" class="ftitle">Binary labels</text>
+          <text x="226" y="84" class="fsub">privacy_mask &gt; 0</text>
+          <text x="226" y="97" class="fsub">→ 1 = has PII</text>
+        </g>
+        <line class="fline" x1="362" y1="73" x2="400" y2="73" marker-end="url(#arrow)"/>
+        <g>
+          <rect class="fbox" x="404" y="40" width="150" height="66" rx="2"/>
+          <text x="418" y="68" class="ftitle">Balance 1:1</text>
+          <text x="418" y="84" class="fsub">5 cycles ·</text>
+          <text x="418" y="97" class="fsub">~6,964 rows each</text>
+        </g>
+        <line class="fline" x1="554" y1="73" x2="592" y2="73" marker-end="url(#arrow)"/>
+
+        <!-- Row 1: embedding -->
+        <text x="596" y="28" class="fstage">VECTORIZATION</text>
+        <g>
+          <rect class="fbox cop" x="596" y="40" width="160" height="66" rx="2"/>
+          <text x="610" y="68" class="ftitle">GloVe 6B 300d</text>
+          <text x="610" y="84" class="fsub">400k word vectors</text>
+          <text x="610" y="97" class="fsub">averaged per doc</text>
+        </g>
+        <!-- down connector -->
+        <path class="fline" d="M676,106 L676,150" marker-end="url(#arrow)"/>
+
+        <!-- Row 2: model -->
+        <text x="596" y="172" class="fstage">MODEL · SCRATCHNET</text>
+        <g>
+          <rect class="fbox ink" x="596" y="184" width="160" height="74" rx="2"/>
+          <text x="610" y="212" class="ftitle w">ScratchNet</text>
+          <text x="610" y="228" class="fsub w">300→256→128→1</text>
+          <text x="610" y="242" class="fsub w">ReLU · dropout · sigmoid</text>
+        </g>
+        <line class="fline" x1="596" y1="221" x2="558" y2="221" marker-end="url(#arrow)"/>
+
+        <text x="404" y="172" class="fstage">LEARNING LOOP</text>
+        <g>
+          <rect class="fbox" x="404" y="184" width="150" height="74" rx="2"/>
+          <text x="418" y="208" class="ftitle">Train</text>
+          <text x="418" y="224" class="fsub">forward → BCE loss</text>
+          <text x="418" y="237" class="fsub">→ backprop → SGD+L2</text>
+          <text x="418" y="251" class="fsub">60 epochs</text>
+        </g>
+        <line class="fline" x1="404" y1="221" x2="366" y2="221" marker-end="url(#arrow)"/>
+        <g>
+          <rect class="fbox" x="212" y="184" width="150" height="74" rx="2"/>
+          <text x="226" y="216" class="ftitle">Save weights</text>
+          <text x="226" y="232" class="fsub">trained W, b arrays</text>
+        </g>
+        <path class="fline" d="M287,258 L287,300" marker-end="url(#arrow)"/>
+
+        <!-- Row 3: inference -->
+        <text x="212" y="306" class="fstage">EVALUATION</text>
+        <rect class="fbox cop" x="212" y="314" width="540" height="40" rx="2"/>
+        <text x="226" y="333" class="ftitle">Inference test</text>
+        <text x="226" y="347" class="fsub">accuracy · precision · recall · F1 · confusion matrix</text>
+      </svg>
+    </div>
+    <p class="code-cap reveal">Fig. 1 — End-to-end pipeline. Stages flow left-to-right (data prep), then into the model, training loop, and finally held-out evaluation.</p>
+  </section>
+
+  <!-- DATA -->
+  <section id="data">
+    <div class="section-header reveal">
+      <span class="section-num">03</span>
+      <h2>Dataset &amp; Preparation</h2>
+    </div>
+
+    <div class="two-col reveal">
+      <div>
+        <h3>The source data</h3>
+        <p>The project uses the English subset of the public <strong>ai4privacy / pii-masking-300k</strong> dataset, loaded directly from the Hugging Face Hub. Each row pairs a <code>source_text</code> snippet with a <code>privacy_mask</code> field listing any PII entities found within it, alongside token-level annotations.</p>
+      </div>
+      <div>
+        <h3>Defining the label</h3>
+        <p>The task is reframed as a simple binary problem: a row is labeled <strong>1 (has PII)</strong> if its <code>privacy_mask</code> contains at least one entity, and <strong>0 (no PII)</strong> otherwise. This collapses rich span annotations into the single signal the network needs to learn.</p>
+      </div>
+    </div>
+
+    <div class="stat-band reveal">
+      <div class="stat-item"><span class="stat-val">29,908</span><span class="stat-lbl">English rows</span></div>
+      <div class="stat-item"><span class="stat-val copper">26,426</span><span class="stat-lbl">Contain PII (88.4%)</span></div>
+      <div class="stat-item"><span class="stat-val">3,482</span><span class="stat-lbl">No PII (11.6%)</span></div>
+      <div class="stat-item"><span class="stat-val copper">24,525</span><span class="stat-lbl">PII rows with &gt;1 entity</span></div>
+    </div>
+
+    <h3 class="reveal" style="margin-top:2.5rem">The class-imbalance problem</h3>
+    <p class="reveal">The raw data is heavily skewed — nearly 9 in 10 rows contain PII. A model trained on it as-is could reach ~88% accuracy by always predicting "PII" while learning nothing useful. So the data was rebalanced to a 1:1 ratio before training.</p>
+
+    <div class="viz reveal">
+      <div class="viz-title">Raw class distribution (before balancing)</div>
+      <div class="bar-row">
+        <span class="bar-lbl">Has PII (1)</span>
+        <div class="bar-track"><div class="bar-fill" data-w="88.4" style="width:0;background:var(--copper)"></div></div>
+        <span class="bar-val">88.4%</span>
+      </div>
+      <div class="bar-row">
+        <span class="bar-lbl">No PII (0)</span>
+        <div class="bar-track"><div class="bar-fill" data-w="11.6" style="width:0;background:var(--accent2)"></div></div>
+        <span class="bar-val">11.6%</span>
+      </div>
+    </div>
+
+    <h3 class="reveal" style="margin-top:2.5rem">The balancing strategy — five cycles</h3>
+    <p class="reveal">Rather than discard most of the PII examples, the 26,426 PII rows were shuffled and split into <strong>five equal partitions of 3,482</strong> — matching the count of non-PII rows exactly. Each "cycle" pairs one PII partition with the full set of non-PII rows, yielding a perfectly balanced training set of ~6,964 examples. Across all five cycles the model can eventually see every PII example without ever training on imbalanced data.</p>
+
+    <div class="steps reveal">
+      <div class="step"><span class="step-num">A</span><div class="step-content"><h3>Partition</h3><p>Shuffle the 26,426 PII indices and slice into 5 chunks of 3,482.</p></div></div>
+      <div class="step"><span class="step-num">B</span><div class="step-content"><h3>Pair</h3><p>Combine each PII chunk with all 3,482 non-PII rows → a balanced ~6,964-row cycle.</p></div></div>
+      <div class="step"><span class="step-num">C</span><div class="step-content"><h3>Persist</h3><p>Write each partition to disk as JSONL so cycles are reproducible and reusable.</p></div></div>
+    </div>
+  </section>
+
+  <!-- EMBEDDINGS -->
+  <section id="embeddings">
+    <div class="section-header reveal">
+      <span class="section-num">04</span>
+      <h2>Vectorization &amp; Embeddings</h2>
+    </div>
+    <p class="lead reveal">A neural network consumes numbers, not text. Turning each document into a fixed-length numeric vector was the single most consequential design decision in the project — and the first approach had to be abandoned.</p>
+
+    <h3 class="reveal" style="margin-top:2rem">First attempt — TF-IDF (and why it failed)</h3>
+    <p class="reveal">The initial approach used TF-IDF: each document became a sparse vector over a vocabulary of unigrams and bigrams, weighting rare, distinctive terms heavily. In principle this suits PII, where the signal often lives in unusual tokens like emails, dates, and ID numbers. In practice, the vectors were extremely sparse and high-dimensional, and the from-scratch network would not learn from them.</p>
+
+    <div class="copper-insight reveal">
+      <span class="tag">The symptom</span>
+      <p>Training loss sat frozen at <strong>0.6931</strong> — exactly ln(2), the loss of a coin-flip — and accuracy hovered at ~49–50% across every epoch. The logits stayed near zero everywhere: with thousands of mostly-zero features feeding a hand-coded network, gradients had effectively nothing to propagate. The math was correct; the representation was the problem.</p>
+    </div>
+
+    <h3 class="reveal" style="margin-top:2.5rem">The fix — averaged GloVe word embeddings</h3>
+    <p class="reveal">The representation was switched to <strong>pre-trained GloVe 6B 300d</strong> embeddings from Stanford — 400,000 word vectors trained on six billion words. Each document is converted to a single dense 300-dimensional vector by averaging the GloVe vectors of all its words. Documents with no recognized words fall back to a zero vector.</p>
+
+    <pre class="code reveal"><span class="cm"># Average the GloVe vectors of every word in a document → one 300-d vector</span>
+<span class="kw">def</span> <span class="fn">text_to_embedding</span>(text, embeddings_index, dim=300):
+    words = text.lower().split()
+    valid = [embeddings_index[w] <span class="kw">for</span> w <span class="kw">in</span> words <span class="kw">if</span> w <span class="kw">in</span> embeddings_index]
+    <span class="kw">if</span> len(valid) == 0:
+        <span class="kw">return</span> np.zeros(dim, dtype=np.float32)   <span class="cm"># no known words</span>
+    <span class="kw">return</span> np.mean(valid, axis=0)</pre>
+    <p class="code-cap reveal">Result: X_emb shape (45,000, 300) — dense, low-dimensional, semantically meaningful.</p>
+
+    <div class="insight reveal">
+      <span class="tag">Why this works where TF-IDF didn't</span>
+      <p>Averaged embeddings collapse extreme sparsity into a compact, dense vector that already encodes semantic meaning learned from billions of words. Instead of asking the network to discover structure in a 20,000-dimensional sea of zeros, it receives 300 informative dimensions — far easier for a small NumPy network to learn from, and dramatically faster to train.</p>
+    </div>
+
+    <div class="three-col reveal" style="margin-top:2rem">
+      <div><h3>6B words</h3><p style="font-size:0.86rem">GloVe was trained on a six-billion-word corpus, giving each vector a strong grasp of general English.</p></div>
+      <div><h3>300 dims</h3><p style="font-size:0.86rem">Each word maps to a rich 300-dimensional representation — detailed without being unwieldy.</p></div>
+      <div><h3>~822 MB</h3><p style="font-size:0.86rem">A manageable download that is simple and fast to work with on general English text.</p></div>
+    </div>
+  </section>
+
+  <!-- MODEL -->
+  <section id="model">
+    <div class="section-header reveal">
+      <span class="section-num">05</span>
+      <h2>Model Architecture</h2>
+    </div>
+    <p class="lead reveal"><strong>ScratchNet</strong> is a feed-forward neural network for binary classification, implemented entirely in NumPy. It takes a 300-dimensional embedding and outputs the probability that the text contains PII.</p>
+
+    <div class="net-wrap reveal">
+      <svg viewBox="0 0 900 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="ScratchNet architecture: 300 input, 256 and 128 hidden, 1 output" style="width:100%;min-width:640px;height:auto;display:block">
+        <defs>
+          <style>
+            .nlbl{font-family:'DM Mono',monospace;font-size:11px;fill:#161a33;}
+            .nsub{font-family:'DM Mono',monospace;font-size:8.5px;fill:#847f88;}
+          </style>
+        </defs>
+        <!-- edges input->h1 -->
+        <g stroke="#d9d4ca" stroke-width="0.7">
+          <line x1="150" y1="80" x2="370" y2="70"/><line x1="150" y1="80" x2="370" y2="150"/><line x1="150" y1="80" x2="370" y2="230"/>
+          <line x1="150" y1="150" x2="370" y2="70"/><line x1="150" y1="150" x2="370" y2="150"/><line x1="150" y1="150" x2="370" y2="230"/>
+          <line x1="150" y1="220" x2="370" y2="70"/><line x1="150" y1="220" x2="370" y2="150"/><line x1="150" y1="220" x2="370" y2="230"/>
+        </g>
+        <!-- edges h1->h2 -->
+        <g stroke="#d9d4ca" stroke-width="0.7">
+          <line x1="370" y1="70" x2="590" y2="100"/><line x1="370" y1="70" x2="590" y2="200"/>
+          <line x1="370" y1="150" x2="590" y2="100"/><line x1="370" y1="150" x2="590" y2="200"/>
+          <line x1="370" y1="230" x2="590" y2="100"/><line x1="370" y1="230" x2="590" y2="200"/>
+        </g>
+        <!-- edges h2->out -->
+        <g stroke="#b06a32" stroke-width="0.9">
+          <line x1="590" y1="100" x2="790" y2="150"/><line x1="590" y1="200" x2="790" y2="150"/>
+        </g>
+        <!-- input layer -->
+        <g fill="#4a5aa8">
+          <circle cx="150" cy="80" r="11"/><circle cx="150" cy="150" r="11"/><circle cx="150" cy="220" r="11"/>
+        </g>
+        <text x="150" y="265" text-anchor="middle" class="nlbl">Input</text>
+        <text x="150" y="281" text-anchor="middle" class="nsub">300 features</text>
+        <!-- hidden 1 -->
+        <g fill="#2c3568">
+          <circle cx="370" cy="70" r="11"/><circle cx="370" cy="150" r="11"/><circle cx="370" cy="230" r="11"/>
+        </g>
+        <text x="370" y="265" text-anchor="middle" class="nlbl">Hidden 1</text>
+        <text x="370" y="281" text-anchor="middle" class="nsub">256 · ReLU</text>
+        <!-- hidden 2 -->
+        <g fill="#2c3568">
+          <circle cx="590" cy="100" r="11"/><circle cx="590" cy="200" r="11"/>
+        </g>
+        <text x="590" y="265" text-anchor="middle" class="nlbl">Hidden 2</text>
+        <text x="590" y="281" text-anchor="middle" class="nsub">128 · ReLU</text>
+        <!-- output -->
+        <circle cx="790" cy="150" r="13" fill="#b06a32"/>
+        <text x="790" y="265" text-anchor="middle" class="nlbl">Output</text>
+        <text x="790" y="281" text-anchor="middle" class="nsub">1 · sigmoid</text>
+      </svg>
+    </div>
+    <p class="code-cap reveal">Fig. 2 — ScratchNet: a 300→256→128→1 fully-connected network. Hidden layers use ReLU with dropout; the output neuron's logit is passed through a sigmoid to produce P(has PII).</p>
+
+    <h3 class="reveal" style="margin-top:2.5rem">Design choices, and the reason for each</h3>
+    <div class="two-col reveal">
+      <div>
+        <h3>He initialization</h3>
+        <p style="font-size:0.88rem">Hidden weights are drawn from a normal distribution scaled by √(2 / fan-in). This is the standard pairing for ReLU networks — it keeps the variance of activations stable across layers so signals neither vanish nor explode early in training.</p>
+      </div>
+      <div>
+        <h3>ReLU activation</h3>
+        <p style="font-size:0.88rem">max(0, z) on hidden layers. It is cheap to compute, has a clean derivative (1 where active, 0 otherwise) that is trivial to hand-code in backprop, and avoids the saturation that would stall gradient flow.</p>
+      </div>
+      <div>
+        <h3>Inverted dropout</h3>
+        <p style="font-size:0.88rem">During training, a random fraction of hidden activations are zeroed and the survivors are scaled up. This regularizes the network against over-fitting and is switched off entirely at inference time.</p>
+      </div>
+      <div>
+        <h3>Sigmoid output</h3>
+        <p style="font-size:0.88rem">A single output neuron produces a logit, mapped by the sigmoid to a probability in (0, 1). A threshold of 0.5 turns that probability into the final has-PII / no-PII decision.</p>
+      </div>
+    </div>
+
+    <h3 class="reveal" style="margin-top:2.5rem">The loss — numerically stable binary cross-entropy</h3>
+    <p class="reveal">The network learns by minimizing binary cross-entropy. Rather than computing the sigmoid and then its log — which overflows for large logits — the loss is computed directly from the raw logits in a numerically stable form that never evaluates a near-zero logarithm.</p>
+    <div class="eq-block reveal">
+      <div class="eq-label">Stable BCE loss</div>
+      <div class="eq">L = mean[ max(<span class="var">z</span>, 0) − <span class="var">z</span>·<span class="var">y</span> + log(1 + e<sup>−|<span class="var">z</span>|</sup>) ]</div>
+      <p class="eq-note">Mathematically equivalent to standard BCE but stable even for |z| &gt; 50. Crucially, its gradient with respect to the logit is simply <strong>sigmoid(z) − y</strong> — the clean starting point for backpropagation.</p>
+    </div>
+
+    <h3 class="reveal" style="margin-top:2.5rem">The four methods that make it learn</h3>
+    <div class="steps reveal">
+      <div class="step"><span class="step-num">1</span><div class="step-content"><h3>forward()</h3><p>Passes embeddings through each layer, applying ReLU and dropout, and returns raw logits. It caches every activation and dropout mask for use in the backward pass.</p></div></div>
+      <div class="step"><span class="step-num">2</span><div class="step-content"><h3>backward()</h3><p>Computes gradients by backpropagation. It starts from sigmoid(z) − y and works backward layer by layer, deriving dW and db for each — applying the ReLU derivative and dropout mask along the way.</p></div></div>
+      <div class="step"><span class="step-num">3</span><div class="step-content"><h3>update_parameters()</h3><p>Applies a stochastic gradient descent step with L2 weight decay: W ← W − lr·(dW + λ·W). The decay term penalizes large weights, discouraging over-fitting.</p></div></div>
+      <div class="step"><span class="step-num">4</span><div class="step-content"><h3>predict_proba()</h3><p>Switches dropout off, runs a forward pass, and returns the sigmoid probability that the text contains PII.</p></div></div>
+    </div>
+  </section>
+
+  <!-- TRAINING -->
+  <section id="training">
+    <div class="section-header reveal">
+      <span class="section-num">06</span>
+      <h2>Training</h2>
+    </div>
+    <p class="lead reveal">One training cycle ties the four methods together into the loop that every neural network runs: predict, measure error, assign blame, adjust.</p>
+
+    <pre class="code reveal"><span class="cm"># Core learning loop — one balanced cycle</span>
+<span class="kw">for</span> epoch <span class="kw">in</span> range(epochs):           <span class="cm"># 60 epochs per cycle</span>
+    logits = model.<span class="fn">forward</span>(X_train)           <span class="cm"># 1. predict</span>
+    loss   = <span class="fn">stable_bce_loss</span>(logits, y_train) <span class="cm"># 2. measure error</span>
+    model.<span class="fn">backward</span>(logits, y_train)         <span class="cm"># 3. assign blame (gradients)</span>
+    model.<span class="fn">update_parameters</span>(lr=lr)          <span class="cm"># 4. adjust weights (SGD + L2)</span></pre>
+
+    <div class="three-col reveal" style="margin-top:1.5rem">
+      <div><h3>SGD + L2</h3><p style="font-size:0.86rem">Vanilla stochastic gradient descent with L2 weight decay (λ = 0.001) as the optimizer — no momentum, no Adam, kept deliberately transparent.</p></div>
+      <div><h3>60 epochs</h3><p style="font-size:0.86rem">A single demonstration cycle runs 60 full passes over the balanced data, after which the learned weights are saved to disk.</p></div>
+      <div><h3>Save &amp; reuse</h3><p style="font-size:0.86rem">Trained weights are persisted so that inference testing runs independently — load weights, predict, evaluate.</p></div>
+    </div>
+
+    <div class="insight reveal">
+      <span class="tag">From a stuck loss to a learning curve</span>
+      <p>Under TF-IDF the loss never moved from 0.6931. After switching to averaged GloVe embeddings — the same network, the same hand-coded backprop — the loss began to fall and accuracy climbed. The lesson the project surfaced repeatedly: when a correct network won't learn, suspect the input representation before the math.</p>
+    </div>
+  </section>
+
+  <!-- RESULTS -->
+  <section id="results">
+    <div class="section-header reveal">
+      <span class="section-num">07</span>
+      <h2>Results &amp; Evaluation</h2>
+    </div>
+    <p class="lead reveal">Evaluated on a held-out test set of 30 examples using saved weights. The from-scratch network correctly classifies 25 of 30 — and does it in a fraction of a second.</p>
+
+    <div class="stat-band reveal">
+      <div class="stat-item"><span class="stat-val green">83.33%</span><span class="stat-lbl">Test accuracy</span></div>
+      <div class="stat-item"><span class="stat-val">0.836</span><span class="stat-lbl">Weighted F1</span></div>
+      <div class="stat-item"><span class="stat-val copper">0.036s</span><span class="stat-lbl">Inference time</span></div>
+      <div class="stat-item"><span class="stat-val">25 / 30</span><span class="stat-lbl">Correct predictions</span></div>
+    </div>
+
+    <div class="two-col reveal" style="margin-top:2.5rem;align-items:start">
+      <div>
+        <h3>Confusion matrix</h3>
+        <p style="font-size:0.88rem;margin-bottom:1rem">Rows are the true label, columns the prediction. The diagonal (green) is correct; off-diagonal (red) are errors.</p>
+        <div style="display:grid;grid-template-columns:auto 1fr;gap:0.4rem;max-width:380px">
+          <div class="cm-axis-y">Actual</div>
+          <div>
+            <div class="cm-grid">
+              <div class="cm-cell" style="background:var(--green)"><span class="n">19</span><span class="t">True Neg · No PII</span></div>
+              <div class="cm-cell" style="background:var(--red);opacity:.85"><span class="n">3</span><span class="t">False Pos</span></div>
+              <div class="cm-cell" style="background:var(--red);opacity:.7"><span class="n">2</span><span class="t">False Neg</span></div>
+              <div class="cm-cell" style="background:var(--green)"><span class="n">6</span><span class="t">True Pos · Has PII</span></div>
+            </div>
+            <div class="cm-axis-x">Predicted →&nbsp;&nbsp; No PII&nbsp;&nbsp;|&nbsp;&nbsp;Has PII</div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <h3>Classification report</h3>
+        <table class="metrics">
+          <thead><tr><th>Class</th><th>Precision</th><th>Recall</th><th>F1</th><th>Support</th></tr></thead>
+          <tbody>
+            <tr><td>0 · No PII</td><td>0.905</td><td>0.864</td><td>0.884</td><td>22</td></tr>
+            <tr><td>1 · Has PII</td><td>0.667</td><td>0.750</td><td>0.706</td><td>8</td></tr>
+            <tr class="hl"><td>Accuracy</td><td>—</td><td>—</td><td>0.833</td><td>30</td></tr>
+            <tr><td>Macro avg</td><td>0.786</td><td>0.807</td><td>0.795</td><td>30</td></tr>
+            <tr><td>Weighted avg</td><td>0.841</td><td>0.833</td><td>0.836</td><td>30</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="viz reveal">
+      <div class="viz-title">Per-class performance</div>
+      <div class="bar-row"><span class="bar-lbl">No PII · F1</span><div class="bar-track"><div class="bar-fill" data-w="88.4" style="width:0;background:var(--green)"></div></div><span class="bar-val">0.884</span></div>
+      <div class="bar-row"><span class="bar-lbl">Has PII · F1</span><div class="bar-track"><div class="bar-fill" data-w="70.6" style="width:0;background:var(--copper)"></div></div><span class="bar-val">0.706</span></div>
+      <div class="bar-row"><span class="bar-lbl">Has PII · Recall</span><div class="bar-track"><div class="bar-fill" data-w="75.0" style="width:0;background:var(--accent2)"></div></div><span class="bar-val">0.750</span></div>
+    </div>
+
+    <div class="copper-insight reveal">
+      <span class="tag">Reading the result honestly</span>
+      <p>83% overall accuracy from a hand-coded network with no autograd is a genuine proof of concept. But the per-class view matters more than the headline: the model is strong on "No PII" (F1 0.88) and weaker on the minority "Has PII" class (F1 0.71). With only 8 positive examples in this test set, every error moves the numbers a lot — and for a compliance tool, missing real PII (false negatives) is the costlier mistake to watch.</p>
+    </div>
+  </section>
+
+  <!-- CONCLUSION -->
+  <section id="conclusion">
+    <div class="section-header reveal">
+      <span class="section-num">08</span>
+      <h2>Conclusion &amp; Next Steps</h2>
+    </div>
+
+    <div class="takeaways reveal">
+      <div class="takeaway">
+        <span class="takeaway-icon">// 01</span>
+        <h3>The math works by hand</h3>
+        <p style="font-size:0.88rem">A network with manually derived forward and backward passes — and no deep-learning framework — learned a real text-classification task to 83% accuracy. The mechanics of deep learning are tractable in plain NumPy.</p>
+      </div>
+      <div class="takeaway">
+        <span class="takeaway-icon">// 02</span>
+        <h3>Representation beats architecture</h3>
+        <p style="font-size:0.88rem">The same network failed on TF-IDF and succeeded on averaged GloVe embeddings. The biggest gain came from feeding the model a better representation, not from changing its layers.</p>
+      </div>
+      <div class="takeaway">
+        <span class="takeaway-icon">// 03</span>
+        <h3>Balance the data first</h3>
+        <p style="font-size:0.88rem">An 88/12 split would have produced a deceptively "accurate" but useless model. Rebalancing to 1:1 across five cycles was what made the accuracy meaningful.</p>
+      </div>
+      <div class="takeaway">
+        <span class="takeaway-icon">// 04</span>
+        <h3>Real business value</h3>
+        <p style="font-size:0.88rem">An in-house screen that flags PII in documents and email lets an organization mask or block sensitive data before it leaves — directly reducing legal, financial, and compliance exposure.</p>
+      </div>
+    </div>
+
+    <h3 class="reveal" style="margin-top:2.5rem">Limitations &amp; future directions</h3>
+    <div class="three-col reveal">
+      <div><h3>Larger test set</h3><p style="font-size:0.86rem">Thirty test examples is too few to trust precise metrics. Evaluating across all five cycles' held-out data would give far more stable estimates.</p></div>
+      <div><h3>Multi-class detection</h3><p style="font-size:0.86rem">Extend beyond binary to distinguish PII types — payment-card (PCI), health (HIPAA), and other protected categories — for finer-grained policy enforcement.</p></div>
+      <div><h3>Recall-first tuning</h3><p style="font-size:0.86rem">For compliance, false negatives are the dangerous error. Lowering the decision threshold or weighting the loss toward the positive class would prioritize catching PII over avoiding false alarms.</p></div>
+    </div>
+
+    <h3 class="reveal" style="margin-top:3rem;font-family:var(--mono);font-size:0.62rem;letter-spacing:0.12em;text-transform:uppercase;font-weight:400;color:var(--text-dim)">Tech Stack</h3>
+    <div class="stack reveal">
+      <span class="stack-pill">Python</span>
+      <span class="stack-pill">NumPy</span>
+      <span class="stack-pill">GloVe 6B 300d</span>
+      <span class="stack-pill">scikit-learn (split / metrics)</span>
+      <span class="stack-pill">pandas</span>
+      <span class="stack-pill">Hugging Face Datasets</span>
+      <span class="stack-pill">Matplotlib</span>
+      <span class="stack-pill">Jupyter / Colab</span>
+    </div>
+
+    <h3 class="reveal" style="margin-top:2.5rem;font-family:var(--mono);font-size:0.62rem;letter-spacing:0.12em;text-transform:uppercase;font-weight:400;color:var(--text-dim)">Data &amp; References</h3>
+    <div class="card reveal" style="font-size:0.8rem;color:var(--text-dim);line-height:2;margin-top:1rem">
+      ai4privacy / pii-masking-300k — public PII-annotated text dataset (Hugging Face Hub)<br>
+      GloVe: Global Vectors for Word Representation — Pennington, Socher &amp; Manning, Stanford NLP (6B / 300d)<br>
+      Breach figures: publicly reported 2024 incidents (Change Healthcare; National Public Data)
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <span class="footer-text">ScratchNet · From-Scratch Neural Network for PII Detection</span>
+  <a class="footer-link" href="#overview">Back to top ↑</a>
+</footer>
+
+<script>
+  // Scroll reveal
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        // animate any bars inside
+        e.target.querySelectorAll('.bar-fill[data-w]').forEach(b => {
+          b.style.width = b.getAttribute('data-w') + '%';
+        });
+        obs.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+</script>
+
+</body>
+</html>
