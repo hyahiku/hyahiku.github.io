@@ -51,7 +51,7 @@ A feed-forward neural network implemented entirely in NumPy — manual forward p
 
 **🔧 Top Stack:** `NumPy` `manual backprop` `GloVe embeddings` `He init` `ReLU` `dropout` `SGD + L2`
 
-📄 [View Project Page](https://hyahiku.github.io/ScratchNet-PII/index.html) &nbsp;|&nbsp; 
+📄 [View Project Page](https://hyahiku.github.io/PII%20Screening-Artificial%20Neural%20Network/PII%20Screening.html) &nbsp;
 
 ---
 
