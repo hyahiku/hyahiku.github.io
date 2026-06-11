@@ -1,1 +1,1 @@
-[CLICK HERE TO VIEW STUDY SHEET](https://hyahiku.github.io/Resources/CompTIA_Data_Plus_Study_Guide.html)
+[CLICK HERE TO VIEW STUDY SHEET](https://hyahiku.github.io/Resources/CompTIA%20Data%2B%20V2%20-%20Overview.html)
