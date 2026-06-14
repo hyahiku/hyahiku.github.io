@@ -4,6 +4,10 @@
 
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-0A66C2?style=flat&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/haley-yahiku)
 
+<a href="https://www.credly.com/badges/c991cd77-2571-4673-bdb3-2349050ea555/public_url">
+  <img src="https://images.credly.com/images/eef81318-aaa6-4e40-83bd-d40a6ee27b28/blob" alt="CompTIA Data+" width="130" />
+</a>
+
 ---
 
 ## 🛠️ Skills
