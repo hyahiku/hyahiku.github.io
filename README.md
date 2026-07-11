@@ -1,4 +1,4 @@
-# 👋 Haley Yahiku
+Edit the following README to include my recent AI Regional Healthcare Coordination Platform project. # 👋 Haley Yahiku
 **B.S. Project Management · M.S. Data Analytics** &nbsp;|&nbsp; 📍 Honolulu, HI
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-0A66C2?style=flat&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/haley-yahiku)
 <a href="https://www.credly.com/badges/c991cd77-2571-4673-bdb3-2349050ea555/public_url">
@@ -13,7 +13,7 @@
 **Data Engineering**
 `Data Cleaning & Preparation` `Feature Engineering` `StandardScaler` `Outlier Detection (IQR)` `Dummy Encoding` `CSV Pipeline Engineering` `Relational Databases`
 **Analytics & Statistics**
-`Exploratory Data Analysis` `T-Test` `ANOVA` `Correlation Analysis` `Descriptive Statistics` `Time Series Forecasting` `Financial Modeling` `Scenario Modeling` `Geospatial Visualization`
+`Exploratory Data Analysis` `T-Test` `ANOVA` `Correlation Analysis` `Descriptive Statistics` `Time Series Forecasting` `Financial Modeling`
 **Tools & Platforms**
 `Jupyter Notebook` `Google Colab` `PySpark` `Microsoft Suite` `SharePoint` `Hugging Face Datasets` `Kaggle`
 ---
@@ -106,4 +106,4 @@ Investigates whether host flexibility (cancellation policy, instant booking, min
 **🔧 Top Stack:** `pandas` `seaborn` `matplotlib` `linear regression` `IQR outlier detection` `EDA`
 📄 [View Project Page](https://hyahiku.github.io/Airbnb-Market%20Analysis/airbnb-exploratory-analysis.html)
 ---
-<sub>🕐 Last updated: July 2026</sub>
+<sub>🕐 Last updated: May 2026</sub>
