@@ -41,14 +41,20 @@
 
 ## 📂 Projects
 ---
+
 ### 🏥 AI Regional Healthcare Coordination Platform — Accessibility Analysis for South Korea
+
 > Healthcare Analytics · Geospatial Visualization · Scenario Modeling · International Collaboration
+
 Data analysis supporting an AI-powered healthcare coordination platform concept built on three pillars — LLM-based patient navigation, real-time hospital matching, and smart EMR exchange. A need-adjusted physician density index (doctors per 1,000 ÷ relative 65+ population burden), min-max scaled 0–1 across all provinces, is rendered as paired choropleth maps comparing current accessibility against a 30% gap-closure projection with 15/30/45% sensitivity analysis. Findings presented on an A0 research poster with a four-member international team.
+
 | | |
 |---|---|
 | 📊 **Dataset** | KOSIS 2023 regional physician density · Statistics Korea / MOIS 2025 aging shares · MOHW regional physician data |
 | ✅ **Key Result** | Seoul index = 1.00 vs. Gyeongbuk 0.00, Jeonnam 0.06, Gangwon 0.13 · 30% gap-closure scenario lifts Gyeongbuk to 0.30 |
+
 **🔧 Top Stack:** `pandas` `numpy` `matplotlib` `SVG choropleth mapping` `min-max normalization` `scenario modeling`
+
 📄 [View Project Page](https://hyahiku.github.io/AI%20Healthcare%20Coordination%20Platform/AI%20Healthcare%20Platform.html) &nbsp;
 
 ---
