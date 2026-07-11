@@ -171,4 +171,4 @@ Investigates whether host flexibility (cancellation policy, instant booking, min
 
 ---
 
-<sub>🕐 Last updated: May 2026</sub>
+<sub>🕐 Last updated: July 2026</sub>
